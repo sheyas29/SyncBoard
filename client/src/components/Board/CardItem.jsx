@@ -1,4 +1,5 @@
 import React from 'react';
+import ReactDOM from 'react-dom';
 import { Draggable } from '@hello-pangea/dnd';
 import { Clock, CheckCircle2, MoreVertical, Edit3, Trash2, ArrowRight } from 'lucide-react';
 
@@ -22,25 +23,34 @@ export const CardItem = ({
 
   return (
     <Draggable draggableId={card._id} index={index}>
-      {(provided, snapshot) => (
-        <div
-          ref={provided.innerRef}
-          {...provided.draggableProps}
-          {...provided.dragHandleProps}
-          className={`group relative bg-slate-900/90 hover:bg-slate-850 rounded-xl p-4 mb-3 border transition-all duration-150 cursor-grab active:cursor-grabbing ${
-            snapshot.isDragging
-              ? 'border-indigo-500 shadow-2xl shadow-indigo-500/30 scale-105 z-50 bg-slate-800'
-              : 'border-slate-800/80 hover:border-slate-700 shadow-sm'
-          }`}
-          onClick={() => onCardClick(card)}
-        >
-          {/* Real-time typing/editing indicator */}
-          {isTyping && (
-            <div className="mb-2 inline-flex items-center gap-1.5 px-2 py-0.5 rounded-full text-[10px] font-medium bg-indigo-950/80 text-indigo-300 border border-indigo-700/60 animate-pulse">
-              <span className="w-1.5 h-1.5 rounded-full bg-indigo-400 animate-ping"></span>
-              <span>{isTyping} is editing...</span>
-            </div>
-          )}
+      {(provided, snapshot) => {
+        const cardContent = (
+          <div
+            ref={provided.innerRef}
+            {...provided.draggableProps}
+            {...provided.dragHandleProps}
+            style={{
+              ...provided.draggableProps.style,
+              cursor: snapshot.isDragging ? 'grabbing' : 'grab',
+            }}
+            className={`group relative bg-slate-900 rounded-xl p-4 mb-3 border ${
+              snapshot.isDragging
+                ? 'border-indigo-400/90 shadow-2xl shadow-indigo-950/80 ring-2 ring-indigo-500/50 bg-slate-850 rotate-1 z-50 pointer-events-auto'
+                : 'border-slate-800/80 hover:border-slate-700 shadow-sm transition-colors duration-150'
+            }`}
+            onClick={() => {
+              if (!snapshot.isDragging) {
+                onCardClick(card);
+              }
+            }}
+          >
+            {/* Real-time typing/editing indicator */}
+            {isTyping && (
+              <div className="mb-2 inline-flex items-center gap-1.5 px-2 py-0.5 rounded-full text-[10px] font-medium bg-indigo-950/80 text-indigo-300 border border-indigo-700/60 animate-pulse">
+                <span className="w-1.5 h-1.5 rounded-full bg-indigo-400 animate-ping"></span>
+                <span>{isTyping} is editing...</span>
+              </div>
+            )}
 
           {/* Top row: Priority & Status Toggle Dropdown */}
           <div className="flex items-center justify-between gap-2 mb-2">
@@ -135,7 +145,14 @@ export const CardItem = ({
             )}
           </div>
         </div>
-      )}
+        );
+
+        if (snapshot.isDragging) {
+          return ReactDOM.createPortal(cardContent, document.body);
+        }
+
+        return cardContent;
+      }}
     </Draggable>
   );
 };

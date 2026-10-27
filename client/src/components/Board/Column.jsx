@@ -38,7 +38,7 @@ export const Column = ({
   const IconComponent = style.icon;
 
   return (
-    <div className="flex flex-col flex-1 min-w-[300px] max-w-sm rounded-2xl bg-slate-900/60 border border-slate-800/80 backdrop-blur-md shadow-xl overflow-hidden">
+    <div className="flex flex-col flex-1 min-w-[300px] max-w-sm rounded-2xl bg-slate-900/95 border border-slate-800 shadow-xl">
       {/* Column Header */}
       <div className="p-4 flex items-center justify-between border-b border-slate-800">
         <div className="flex items-center gap-2.5">
