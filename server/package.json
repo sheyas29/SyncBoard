@@ -1,0 +1,38 @@
+{
+  "name": "syncboard-server",
+  "version": "1.0.0",
+  "description": "Backend API and WebSocket server for SyncBoard Real-Time Collaborative Kanban Board",
+  "type": "module",
+  "main": "src/server.js",
+  "scripts": {
+    "start": "node src/server.js",
+    "dev": "nodemon src/server.js",
+    "test": "node --experimental-vm-modules ./node_modules/jest/bin/jest.js --runInBand --detectOpenHandles --forceExit"
+  },
+  "keywords": ["kanban", "socketio", "mern", "realtime", "mongodb", "express"],
+  "author": "",
+  "license": "MIT",
+  "dependencies": {
+    "bcryptjs": "^2.4.3",
+    "cors": "^2.8.5",
+    "dotenv": "^16.4.7",
+    "express": "^4.21.2",
+    "jsonwebtoken": "^9.0.2",
+    "mongodb-memory-server": "^10.1.4",
+    "mongoose": "^8.10.1",
+    "morgan": "^1.10.0",
+    "socket.io": "^4.8.1",
+    "swagger-ui-express": "^5.0.1",
+    "yamljs": "^0.3.0"
+  },
+  "devDependencies": {
+    "jest": "^29.7.0",
+    "nodemon": "^3.1.9",
+    "socket.io-client": "^4.8.1",
+    "supertest": "^7.0.0"
+  },
+  "jest": {
+    "testEnvironment": "node",
+    "testTimeout": 30000
+  }
+}
