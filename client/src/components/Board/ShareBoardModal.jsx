@@ -37,27 +37,29 @@ export const ShareBoardModal = ({ board, onClose, onMemberAdded }) => {
   };
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-950/80 backdrop-blur-sm animate-in fade-in duration-200">
-      <div className="bg-slate-900 border border-slate-800 rounded-2xl w-full max-w-md shadow-2xl overflow-hidden">
+    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-[#383139]/40 backdrop-blur-sm animate-in fade-in duration-180">
+      <div className="bg-[#fffdf7] border border-white rounded-[38px] w-full max-w-md shadow-[0_24px_60px_-15px_rgba(56,49,57,0.2),inset_3px_3px_6px_rgba(255,255,255,0.95),inset_-3px_-3px_8px_rgba(56,49,57,0.05)] overflow-hidden">
         {/* Header */}
-        <div className="px-6 py-4 border-b border-slate-800 flex items-center justify-between">
-          <div className="flex items-center gap-2">
-            <UserPlus className="w-5 h-5 text-indigo-400" />
-            <h3 className="font-bold text-base text-slate-100">Board Collaborators</h3>
+        <div className="px-7 py-5 border-b border-[#f1f2fa] flex items-center justify-between">
+          <div className="flex items-center gap-2.5">
+            <div className="w-8 h-8 rounded-full bg-[#ded0f9] shadow-[0_4px_10px_-2px_rgba(222,208,249,0.6),inset_1.5px_1.5px_2px_rgba(255,255,255,0.8),inset_-1.5px_-1.5px_2px_rgba(130,100,180,0.2)] flex items-center justify-center text-[#383139]">
+              <UserPlus className="w-4 h-4 text-[#4b3378]" />
+            </div>
+            <h3 className="font-bold text-base text-[#383139]">Board Collaborators</h3>
           </div>
           <button
             onClick={onClose}
-            className="p-1 rounded-lg text-slate-400 hover:text-white hover:bg-slate-800 transition-colors"
+            className="w-9 h-9 rounded-full bg-[#f1f2fa] hover:bg-[#e4e6f4] text-[#383139] shadow-[0_3px_8px_-2px_rgba(56,49,57,0.08),inset_1.5px_1.5px_3px_rgba(255,255,255,0.95),inset_-1.5px_-1.5px_3px_rgba(56,49,57,0.06)] active:scale-95 transition-all flex items-center justify-center"
           >
-            <X className="w-5 h-5" />
+            <X className="w-4 h-4 stroke-[2.5]" />
           </button>
         </div>
 
         {/* Content */}
-        <div className="p-6 space-y-5">
+        <div className="p-7 space-y-5">
           {/* Invite Input */}
           <form onSubmit={handleAddMember} className="space-y-3">
-            <label className="block text-xs font-semibold text-slate-300 uppercase tracking-wider">
+            <label className="block text-xs font-bold text-[#383139] uppercase tracking-wider">
               Invite by Email
             </label>
             <div className="flex gap-2">
@@ -66,27 +68,27 @@ export const ShareBoardModal = ({ board, onClose, onMemberAdded }) => {
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
                 placeholder="colleague@example.com"
-                className="flex-1 px-3.5 py-2.5 rounded-xl bg-slate-800 border border-slate-700 text-slate-100 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500 placeholder:text-slate-500"
+                className="flex-1 px-4 py-3 rounded-2xl clay-inset-well text-sm font-semibold transition-all placeholder:text-[#8e8a94]"
                 required
               />
               <button
                 type="submit"
                 disabled={isSubmitting}
-                className="px-4 py-2.5 rounded-xl bg-indigo-600 hover:bg-indigo-500 text-white text-xs font-semibold shadow-lg shadow-indigo-600/30 transition-all disabled:opacity-50 shrink-0"
+                className="px-5 py-3 rounded-full clay-btn-pill clay-btn-pink text-xs font-bold shrink-0 disabled:opacity-50"
               >
                 {isSubmitting ? 'Inviting...' : 'Invite'}
               </button>
             </div>
 
             {error && (
-              <div className="p-3 rounded-lg bg-rose-500/10 border border-rose-500/30 text-rose-400 text-xs flex items-center gap-2">
+              <div className="p-3.5 rounded-2xl bg-[#fcd2df] text-[#8c2340] text-xs font-semibold flex items-center gap-2 shadow-[inset_1.5px_1.5px_3px_rgba(180,60,90,0.15)]">
                 <AlertCircle className="w-4 h-4 shrink-0" />
                 <span>{error}</span>
               </div>
             )}
 
             {successMsg && (
-              <div className="p-3 rounded-lg bg-emerald-500/10 border border-emerald-500/30 text-emerald-400 text-xs flex items-center gap-2">
+              <div className="p-3.5 rounded-2xl bg-[#c0efdc] text-[#1c573c] text-xs font-bold flex items-center gap-2 shadow-[inset_1.5px_1.5px_3px_rgba(90,160,130,0.2)]">
                 <Check className="w-4 h-4 shrink-0" />
                 <span>{successMsg}</span>
               </div>
@@ -94,14 +96,14 @@ export const ShareBoardModal = ({ board, onClose, onMemberAdded }) => {
           </form>
 
           {/* Members List */}
-          <div className="border-t border-slate-800 pt-4">
-            <h4 className="text-xs font-semibold text-slate-400 uppercase tracking-wider mb-3">
+          <div className="border-t border-[#f1f2fa] pt-4">
+            <h4 className="text-xs font-bold text-[#8e8a94] uppercase tracking-wider mb-3">
               Active Members ({board.members?.length || 0})
             </h4>
-            <div className="space-y-2 max-h-48 overflow-y-auto pr-1">
+            <div className="space-y-2.5 max-h-48 overflow-y-auto pr-1">
               {/* Owner */}
               {board.owner && (
-                <div className="flex items-center justify-between p-2 rounded-xl bg-slate-800/40 border border-slate-800">
+                <div className="flex items-center justify-between p-2.5 rounded-2xl bg-[#f7f6fc] shadow-[inset_1px_1px_2px_rgba(56,49,57,0.06),inset_-1px_-1px_2px_rgba(255,255,255,0.9)]">
                   <div className="flex items-center gap-2.5">
                     <img
                       src={
@@ -111,16 +113,16 @@ export const ShareBoardModal = ({ board, onClose, onMemberAdded }) => {
                         )}`
                       }
                       alt={board.owner.name}
-                      className="w-7 h-7 rounded-full object-cover"
+                      className="w-7 h-7 rounded-full object-cover ring-2 ring-white shadow-sm"
                     />
                     <div>
-                      <p className="text-xs font-semibold text-slate-200">
+                      <p className="text-xs font-bold text-[#383139]">
                         {board.owner.name}
                       </p>
-                      <p className="text-[10px] text-slate-400">{board.owner.email}</p>
+                      <p className="text-[11px] text-[#8e8a94]">{board.owner.email}</p>
                     </div>
                   </div>
-                  <span className="text-[10px] font-semibold uppercase px-2 py-0.5 rounded-full bg-indigo-500/10 text-indigo-400 border border-indigo-500/20">
+                  <span className="text-[10px] font-bold uppercase px-2.5 py-0.5 rounded-full bg-[#f6a3ca] text-[#383139] shadow-[0_2px_6px_-1px_rgba(246,163,202,0.6),inset_1px_1px_2px_rgba(255,255,255,0.8)]">
                     Owner
                   </span>
                 </div>
@@ -135,7 +137,7 @@ export const ShareBoardModal = ({ board, onClose, onMemberAdded }) => {
                     return (
                       <div
                         key={u._id || index}
-                        className="flex items-center justify-between p-2 rounded-xl bg-slate-800/40 border border-slate-800"
+                        className="flex items-center justify-between p-2.5 rounded-2xl bg-[#f7f6fc] shadow-[inset_1px_1px_2px_rgba(56,49,57,0.06),inset_-1px_-1px_2px_rgba(255,255,255,0.9)]"
                       >
                         <div className="flex items-center gap-2.5">
                           <img
@@ -146,16 +148,16 @@ export const ShareBoardModal = ({ board, onClose, onMemberAdded }) => {
                               )}`
                             }
                             alt={u.name}
-                            className="w-7 h-7 rounded-full object-cover"
+                            className="w-7 h-7 rounded-full object-cover ring-2 ring-white shadow-sm"
                           />
                           <div>
-                            <p className="text-xs font-semibold text-slate-200">
+                            <p className="text-xs font-bold text-[#383139]">
                               {u.name}
                             </p>
-                            <p className="text-[10px] text-slate-400">{u.email}</p>
+                            <p className="text-[11px] text-[#8e8a94]">{u.email}</p>
                           </div>
                         </div>
-                        <span className="text-[10px] font-semibold uppercase px-2 py-0.5 rounded-full bg-slate-700 text-slate-300">
+                        <span className="text-[10px] font-bold uppercase px-2.5 py-0.5 rounded-full bg-[#e6e8f5] text-[#383139]">
                           {m.role || 'Member'}
                         </span>
                       </div>

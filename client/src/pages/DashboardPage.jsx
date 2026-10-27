@@ -12,6 +12,7 @@ import {
   AlertCircle,
   FolderKanban,
   ExternalLink,
+  Sparkles,
 } from 'lucide-react';
 
 export const DashboardPage = () => {
@@ -90,39 +91,49 @@ export const DashboardPage = () => {
   );
 
   return (
-    <div className="min-h-screen bg-slate-950 text-slate-100 flex flex-col">
+    <div className="min-h-screen bg-[#f1f2fa] text-[#383139] flex flex-col font-sans">
       <Navbar />
 
-      <main className="flex-1 max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-8 py-8">
-        {/* Header & Actions */}
-        <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 mb-8">
-          <div>
-            <h1 className="text-2xl sm:text-3xl font-extrabold text-white tracking-tight">
-              Workspaces & Boards
-            </h1>
-            <p className="text-sm text-slate-400 mt-1">
-              Select an active board to collaborate or launch a new project
-            </p>
-          </div>
+      <main className="flex-1 max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-8 py-6">
+        {/* Claymorphic Hero Cushion */}
+        <div className="rounded-[40px] bg-[#f6a3ca] shadow-[0_20px_40px_-12px_rgba(246,163,202,0.6),inset_4px_4px_8px_rgba(255,255,255,0.85),inset_-4px_-4px_10px_rgba(180,80,130,0.25)] p-8 sm:p-10 mb-8 relative overflow-hidden">
+          {/* Molded Decorative Overlapping Objects */}
+          <div className="absolute -top-10 -right-10 w-44 h-44 rounded-full bg-[#ded0f9] shadow-[0_12px_30px_-6px_rgba(222,208,249,0.7),inset_3px_3px_6px_rgba(255,255,255,0.9),inset_-3px_-3px_6px_rgba(130,100,180,0.2)] pointer-events-none" />
+          <div className="absolute bottom-4 -right-2 w-28 h-28 rounded-full bg-[#c0efdc] shadow-[0_10px_25px_-5px_rgba(192,239,220,0.7),inset_2px_2px_4px_rgba(255,255,255,0.9),inset_-2px_-2px_4px_rgba(90,160,130,0.2)] pointer-events-none" />
 
-          <button
-            onClick={() => setIsCreateModalOpen(true)}
-            className="flex items-center gap-2 px-5 py-2.5 rounded-xl bg-indigo-600 hover:bg-indigo-500 text-white font-semibold text-sm shadow-lg shadow-indigo-600/30 hover:shadow-indigo-600/50 transition-all active:scale-95"
-          >
-            <Plus className="w-4 h-4" />
-            <span>Create Board</span>
-          </button>
+          <div className="relative z-10 flex flex-col md:flex-row md:items-center justify-between gap-6 max-w-3xl">
+            <div>
+              <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-white/70 shadow-[inset_1px_1px_2px_rgba(255,255,255,0.9),inset_-1px_-1px_2px_rgba(56,49,57,0.08)] text-xs font-bold text-[#383139] mb-3">
+                <Sparkles className="w-3.5 h-3.5 text-[#e273a5]" />
+                <span>Collaborative Workspaces</span>
+              </div>
+              <h1 className="text-3xl sm:text-4xl font-extrabold text-[#383139] tracking-tight leading-tight">
+                Your Projects & Boards
+              </h1>
+              <p className="text-sm font-medium text-[#48404b] mt-2 max-w-xl leading-relaxed">
+                Open an existing board to collaborate with your team in real time, or create a brand new workspace.
+              </p>
+            </div>
+
+            <button
+              onClick={() => setIsCreateModalOpen(true)}
+              className="px-6 py-3.5 rounded-full clay-btn-pill clay-btn-cream text-sm font-bold shadow-[0_8px_20px_-4px_rgba(56,49,57,0.12)] shrink-0 self-start md:self-auto"
+            >
+              <Plus className="w-4 h-4 stroke-[2.5]" />
+              <span>Create Board</span>
+            </button>
+          </div>
         </div>
 
-        {/* Search Bar */}
+        {/* Search Bar - Recessed Inset Well */}
         <div className="relative max-w-md mb-8">
-          <Search className="w-4 h-4 text-slate-500 absolute left-3.5 top-1/2 -translate-y-1/2" />
+          <Search className="w-4 h-4 text-[#8e8a94] absolute left-4 top-1/2 -translate-y-1/2" />
           <input
             type="text"
             value={search}
             onChange={(e) => setSearch(e.target.value)}
-            placeholder="Search boards..."
-            className="w-full pl-10 pr-4 py-2.5 rounded-xl bg-slate-900 border border-slate-800 text-slate-200 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500 placeholder:text-slate-500"
+            placeholder="Search workspaces..."
+            className="w-full pl-11 pr-4 py-3 rounded-2xl clay-inset-well text-sm font-semibold placeholder:text-[#8e8a94]"
           />
         </div>
 
@@ -132,12 +143,12 @@ export const DashboardPage = () => {
             {[1, 2, 3].map((i) => (
               <div
                 key={i}
-                className="h-48 rounded-2xl bg-slate-900/60 border border-slate-800/80 animate-pulse p-6"
+                className="h-52 rounded-[32px] bg-[#fffdf7] border border-white shadow-[0_12px_28px_-8px_rgba(56,49,57,0.08),inset_2px_2px_4px_rgba(255,255,255,0.95),inset_-2px_-2px_5px_rgba(56,49,57,0.04)] animate-pulse p-6"
               >
-                <div className="h-6 w-2/3 bg-slate-800 rounded-lg mb-3"></div>
-                <div className="h-4 w-full bg-slate-800 rounded-lg mb-2"></div>
-                <div className="h-4 w-1/2 bg-slate-800 rounded-lg mb-6"></div>
-                <div className="h-8 w-full bg-slate-800 rounded-lg"></div>
+                <div className="h-6 w-2/3 bg-[#eceef8] rounded-full mb-4"></div>
+                <div className="h-4 w-full bg-[#eceef8] rounded-full mb-2"></div>
+                <div className="h-4 w-1/2 bg-[#eceef8] rounded-full mb-8"></div>
+                <div className="h-9 w-full bg-[#eceef8] rounded-full"></div>
               </div>
             ))}
           </div>
@@ -145,66 +156,69 @@ export const DashboardPage = () => {
 
         {/* Empty State */}
         {!loading && filteredBoards.length === 0 && (
-          <div className="flex flex-col items-center justify-center p-12 text-center rounded-3xl bg-slate-900/40 border border-slate-800/80 my-8">
-            <div className="w-16 h-16 rounded-2xl bg-indigo-500/10 border border-indigo-500/20 flex items-center justify-center mb-4">
-              <FolderKanban className="w-8 h-8 text-indigo-400" />
+          <div className="flex flex-col items-center justify-center p-12 text-center rounded-[38px] bg-[#fffdf7] border border-white shadow-[0_16px_36px_-12px_rgba(56,49,57,0.08),inset_3px_3px_6px_rgba(255,255,255,0.95),inset_-3px_-3px_8px_rgba(56,49,57,0.04)] my-8">
+            <div className="w-16 h-16 rounded-full bg-[#ded0f9] shadow-[0_8px_20px_-4px_rgba(222,208,249,0.7),inset_2px_2px_4px_rgba(255,255,255,0.85),inset_-2px_-2px_4px_rgba(130,100,180,0.2)] flex items-center justify-center mb-4">
+              <FolderKanban className="w-8 h-8 text-[#4b3378]" />
             </div>
-            <h3 className="text-lg font-bold text-white mb-1">No Boards Found</h3>
-            <p className="text-xs text-slate-400 max-w-sm mb-6">
+            <h3 className="text-xl font-bold text-[#383139] mb-1">No Boards Found</h3>
+            <p className="text-xs font-medium text-[#48404b] max-w-sm mb-6">
               {search
                 ? `No boards match your search query "${search}".`
-                : 'Get started by creating your first collaborative Kanban board.'}
+                : 'Get started by creating your first collaborative Kanban workspace.'}
             </p>
             <button
               onClick={() => setIsCreateModalOpen(true)}
-              className="px-5 py-2.5 rounded-xl bg-indigo-600 hover:bg-indigo-500 text-white text-xs font-semibold shadow-lg shadow-indigo-600/30 transition-all flex items-center gap-2"
+              className="px-6 py-3 rounded-full clay-btn-pill clay-btn-pink text-xs font-bold"
             >
               <Plus className="w-4 h-4" /> Create First Board
             </button>
           </div>
         )}
 
-        {/* Boards Grid */}
+        {/* Boards Grid - Molded Cream Cushions */}
         {!loading && filteredBoards.length > 0 && (
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
             {filteredBoards.map((board) => (
               <Link
                 key={board._id}
                 to={`/board/${board._id}`}
-                className="group flex flex-col justify-between rounded-2xl bg-slate-900/80 hover:bg-slate-850 border border-slate-800 hover:border-indigo-500/50 p-6 shadow-lg hover:shadow-2xl hover:shadow-indigo-500/10 transition-all duration-200"
+                className="group flex flex-col justify-between rounded-[32px] bg-[#fffdf7] border border-white shadow-[0_12px_28px_-8px_rgba(56,49,57,0.08),inset_2.5px_2.5px_5px_rgba(255,255,255,0.95),inset_-2.5px_-2.5px_6px_rgba(56,49,57,0.05)] hover:shadow-[0_18px_36px_-6px_rgba(56,49,57,0.12),inset_2.5px_2.5px_5px_rgba(255,255,255,0.95),inset_-2.5px_-2.5px_6px_rgba(56,49,57,0.05)] hover:-translate-y-1 p-6 transition-all duration-180"
               >
                 <div>
                   <div className="flex items-start justify-between gap-3 mb-3">
-                    <h3 className="font-bold text-lg text-white group-hover:text-indigo-300 transition-colors line-clamp-1">
+                    <h3 className="font-bold text-lg text-[#383139] group-hover:text-[#c74c83] transition-colors line-clamp-1">
                       {board.title}
                     </h3>
                     <button
                       onClick={(e) => handleDeleteBoard(e, board._id, board.title)}
-                      className="p-1.5 rounded-lg text-slate-500 hover:text-rose-400 hover:bg-rose-950/30 opacity-0 group-hover:opacity-100 transition-all"
+                      className="p-2 rounded-full text-[#8e8a94] hover:text-[#c9345e] hover:bg-[#fcd2df] opacity-0 group-hover:opacity-100 transition-all active:scale-90"
                       title="Delete board"
                     >
                       <Trash2 className="w-4 h-4" />
                     </button>
                   </div>
 
-                  <p className="text-xs text-slate-400 line-clamp-2 min-h-[32px] mb-5">
+                  <p className="text-xs font-medium text-[#48404b] line-clamp-2 min-h-[34px] mb-5 leading-relaxed">
                     {board.description || 'No description provided.'}
                   </p>
                 </div>
 
-                <div className="pt-4 border-t border-slate-800 flex items-center justify-between text-xs text-slate-400">
-                  <div className="flex items-center gap-4">
-                    <span className="flex items-center gap-1.5">
-                      <Kanban className="w-3.5 h-3.5 text-indigo-400" />
-                      <span>{board.cardCount ?? 0} cards</span>
+                <div className="pt-4 border-t border-[#f1f2fa] flex items-center justify-between text-xs font-bold">
+                  <div className="flex items-center gap-2">
+                    {/* Card Count Pill */}
+                    <span className="flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-[#ded0f9] text-[#4b3378] shadow-[0_2px_6px_-1px_rgba(222,208,249,0.7),inset_1px_1px_2px_rgba(255,255,255,0.8)]">
+                      <Kanban className="w-3.5 h-3.5" />
+                      <span>{board.cardCount ?? 0}</span>
                     </span>
-                    <span className="flex items-center gap-1.5">
-                      <Users className="w-3.5 h-3.5 text-cyan-400" />
-                      <span>{board.members?.length || 1} members</span>
+
+                    {/* Members Pill */}
+                    <span className="flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-[#c0efdc] text-[#1c573c] shadow-[0_2px_6px_-1px_rgba(192,239,220,0.7),inset_1px_1px_2px_rgba(255,255,255,0.8)]">
+                      <Users className="w-3.5 h-3.5" />
+                      <span>{board.members?.length || 1}</span>
                     </span>
                   </div>
 
-                  <span className="flex items-center gap-1 text-indigo-400 group-hover:translate-x-1 transition-transform font-medium">
+                  <span className="flex items-center gap-1 text-[#c74c83] group-hover:translate-x-1 transition-transform">
                     Open <ExternalLink className="w-3 h-3" />
                   </span>
                 </div>
@@ -214,16 +228,19 @@ export const DashboardPage = () => {
         )}
       </main>
 
-      {/* Create Board Modal */}
+      {/* Create Board Modal - Soft Cream Molded Tray */}
       {isCreateModalOpen && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-950/80 backdrop-blur-sm animate-in fade-in duration-200">
-          <div className="bg-slate-900 border border-slate-800 rounded-2xl w-full max-w-md shadow-2xl p-6">
-            <h3 className="text-lg font-bold text-white mb-4 flex items-center gap-2">
-              <Plus className="w-5 h-5 text-indigo-400" /> Create New Board
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-[#383139]/40 backdrop-blur-sm animate-in fade-in duration-180">
+          <div className="bg-[#fffdf7] border border-white rounded-[38px] w-full max-w-md shadow-[0_24px_60px_-15px_rgba(56,49,57,0.2),inset_3px_3px_6px_rgba(255,255,255,0.95),inset_-3px_-3px_8px_rgba(56,49,57,0.05)] p-7">
+            <h3 className="text-xl font-bold text-[#383139] mb-4 flex items-center gap-2.5">
+              <div className="w-8 h-8 rounded-full bg-[#f6a3ca] shadow-[0_4px_10px_-2px_rgba(246,163,202,0.6),inset_1.5px_1.5px_2px_rgba(255,255,255,0.8)] flex items-center justify-center text-[#383139]">
+                <Plus className="w-4 h-4 stroke-[2.5]" />
+              </div>
+              Create New Board
             </h3>
 
             {createError && (
-              <div className="mb-4 p-3 rounded-lg bg-rose-500/10 border border-rose-500/30 text-rose-400 text-xs flex items-center gap-2">
+              <div className="mb-4 p-3.5 rounded-2xl bg-[#fcd2df] text-[#8c2340] text-xs font-semibold flex items-center gap-2 shadow-[inset_1.5px_1.5px_3px_rgba(180,60,90,0.15)]">
                 <AlertCircle className="w-4 h-4 shrink-0" />
                 <span>{createError}</span>
               </div>
@@ -231,7 +248,7 @@ export const DashboardPage = () => {
 
             <form onSubmit={handleCreateBoard} className="space-y-4">
               <div>
-                <label className="block text-xs font-semibold text-slate-300 mb-1.5 uppercase tracking-wider">
+                <label className="block text-xs font-bold text-[#383139] mb-1.5 uppercase tracking-wider">
                   Board Title *
                 </label>
                 <input
@@ -239,14 +256,14 @@ export const DashboardPage = () => {
                   value={newTitle}
                   onChange={(e) => setNewTitle(e.target.value)}
                   placeholder="e.g. Q4 Sprint & Feature Tracker"
-                  className="w-full px-3.5 py-2.5 rounded-xl bg-slate-800 border border-slate-700 text-slate-100 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500 placeholder:text-slate-500"
+                  className="w-full px-4 py-3 rounded-2xl clay-inset-well text-sm font-semibold placeholder:text-[#8e8a94]"
                   autoFocus
                   required
                 />
               </div>
 
               <div>
-                <label className="block text-xs font-semibold text-slate-300 mb-1.5 uppercase tracking-wider">
+                <label className="block text-xs font-bold text-[#383139] mb-1.5 uppercase tracking-wider">
                   Description
                 </label>
                 <textarea
@@ -254,7 +271,7 @@ export const DashboardPage = () => {
                   value={newDescription}
                   onChange={(e) => setNewDescription(e.target.value)}
                   placeholder="Outline purpose or goals..."
-                  className="w-full px-3.5 py-2 rounded-xl bg-slate-800 border border-slate-700 text-slate-100 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500 resize-none placeholder:text-slate-500"
+                  className="w-full px-4 py-3 rounded-2xl clay-inset-well text-sm font-medium resize-none placeholder:text-[#8e8a94]"
                 />
               </div>
 
@@ -262,14 +279,14 @@ export const DashboardPage = () => {
                 <button
                   type="button"
                   onClick={() => setIsCreateModalOpen(false)}
-                  className="px-4 py-2 rounded-xl text-slate-300 hover:bg-slate-800 text-xs font-semibold transition-colors"
+                  className="px-5 py-2.5 rounded-full bg-[#f1f2fa] hover:bg-[#e6e8f5] text-[#383139] text-xs font-bold shadow-[0_3px_8px_-2px_rgba(56,49,57,0.06),inset_1.5px_1.5px_2px_rgba(255,255,255,0.95)] active:scale-95 transition-all"
                 >
                   Cancel
                 </button>
                 <button
                   type="submit"
                   disabled={isSubmitting}
-                  className="px-5 py-2.5 rounded-xl bg-indigo-600 hover:bg-indigo-500 text-white text-xs font-semibold shadow-lg shadow-indigo-600/30 transition-all disabled:opacity-50"
+                  className="px-6 py-2.5 rounded-full clay-btn-pill clay-btn-pink text-xs font-bold disabled:opacity-50"
                 >
                   {isSubmitting ? 'Creating...' : 'Create Board'}
                 </button>

@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { X, History, Sparkles } from 'lucide-react';
+import { X, History } from 'lucide-react';
 import api from '../../api/client.js';
 
 export const ActivityDrawer = ({ boardId, isOpen, onClose }) => {
@@ -33,14 +33,14 @@ export const ActivityDrawer = ({ boardId, isOpen, onClose }) => {
       case 'CARD_CREATED':
         return (
           <span>
-            created task <strong className="text-slate-200">{act.details?.cardTitle}</strong>
+            created task <strong className="text-[#383139]">{act.details?.cardTitle}</strong>
           </span>
         );
       case 'CARD_MOVED':
         return (
           <span>
-            moved <strong className="text-slate-200">{act.details?.cardTitle}</strong> to{' '}
-            <span className="capitalize text-indigo-400 font-medium">
+            moved <strong className="text-[#383139]">{act.details?.cardTitle}</strong> to{' '}
+            <span className="capitalize font-bold text-[#8264b4]">
               {act.details?.toStatus?.replace('_', ' ')}
             </span>
           </span>
@@ -48,19 +48,19 @@ export const ActivityDrawer = ({ boardId, isOpen, onClose }) => {
       case 'CARD_UPDATED':
         return (
           <span>
-            updated task <strong className="text-slate-200">{act.details?.cardTitle}</strong>
+            updated task <strong className="text-[#383139]">{act.details?.cardTitle}</strong>
           </span>
         );
       case 'CARD_DELETED':
         return (
           <span>
-            deleted task <strong className="text-slate-200">{act.details?.cardTitle}</strong>
+            deleted task <strong className="text-[#383139]">{act.details?.cardTitle}</strong>
           </span>
         );
       case 'MEMBER_ADDED':
         return (
           <span>
-            invited <strong className="text-slate-200">{act.details?.addedUser}</strong> to the board
+            invited <strong className="text-[#383139]">{act.details?.addedUser}</strong> to the board
           </span>
         );
       default:
@@ -69,36 +69,38 @@ export const ActivityDrawer = ({ boardId, isOpen, onClose }) => {
   };
 
   return (
-    <div className="fixed inset-y-0 right-0 z-50 w-full max-w-sm bg-slate-900 border-l border-slate-800 shadow-2xl flex flex-col animate-in slide-in-from-right duration-200">
+    <div className="fixed inset-y-0 right-0 z-50 w-full max-w-sm bg-[#fffdf7] border-l border-white shadow-[0_20px_50px_-10px_rgba(56,49,57,0.2),inset_3px_0_6px_rgba(255,255,255,0.95)] flex flex-col animate-in slide-in-from-right duration-180">
       {/* Header */}
-      <div className="p-4 border-b border-slate-800 flex items-center justify-between bg-slate-900/80">
-        <div className="flex items-center gap-2">
-          <History className="w-5 h-5 text-indigo-400" />
-          <h3 className="font-bold text-base text-slate-100">Board Activity</h3>
+      <div className="p-5 border-b border-[#f1f2fa] flex items-center justify-between">
+        <div className="flex items-center gap-2.5">
+          <div className="w-8 h-8 rounded-full bg-[#ded0f9] shadow-[0_4px_10px_-2px_rgba(222,208,249,0.6),inset_1.5px_1.5px_2px_rgba(255,255,255,0.8),inset_-1.5px_-1.5px_2px_rgba(130,100,180,0.2)] flex items-center justify-center text-[#383139]">
+            <History className="w-4 h-4 text-[#4b3378]" />
+          </div>
+          <h3 className="font-bold text-base text-[#383139]">Board Activity</h3>
         </div>
         <button
           onClick={onClose}
-          className="p-1 rounded-lg text-slate-400 hover:text-white hover:bg-slate-800 transition-colors"
+          className="w-9 h-9 rounded-full bg-[#f1f2fa] hover:bg-[#e4e6f4] text-[#383139] shadow-[0_3px_8px_-2px_rgba(56,49,57,0.08),inset_1.5px_1.5px_3px_rgba(255,255,255,0.95),inset_-1.5px_-1.5px_3px_rgba(56,49,57,0.06)] active:scale-95 transition-all flex items-center justify-center"
         >
-          <X className="w-5 h-5" />
+          <X className="w-4 h-4 stroke-[2.5]" />
         </button>
       </div>
 
       {/* Content */}
-      <div className="p-4 overflow-y-auto flex-1 space-y-4">
+      <div className="p-5 overflow-y-auto flex-1 space-y-3.5">
         {loading ? (
-          <div className="flex items-center justify-center p-8 text-slate-500 text-xs">
+          <div className="flex items-center justify-center p-8 text-[#8e8a94] text-xs font-semibold">
             Loading activity stream...
           </div>
         ) : activities.length === 0 ? (
-          <div className="text-center p-8 text-slate-500 text-xs">
+          <div className="text-center p-8 text-[#8e8a94] text-xs font-medium">
             No recent activity recorded yet.
           </div>
         ) : (
           activities.map((act) => (
             <div
               key={act._id}
-              className="flex items-start gap-3 p-3 rounded-xl bg-slate-850/60 border border-slate-800/80 text-xs"
+              className="flex items-start gap-3 p-3.5 rounded-2xl bg-[#f7f6fc] border border-white shadow-[0_4px_12px_-2px_rgba(56,49,57,0.06),inset_1.5px_1.5px_3px_rgba(255,255,255,0.95),inset_-1.5px_-1.5px_3px_rgba(56,49,57,0.04)] text-xs"
             >
               <img
                 src={
@@ -108,14 +110,14 @@ export const ActivityDrawer = ({ boardId, isOpen, onClose }) => {
                   )}`
                 }
                 alt={act.user?.name}
-                className="w-7 h-7 rounded-full object-cover shrink-0 mt-0.5"
+                className="w-7 h-7 rounded-full object-cover shrink-0 ring-2 ring-white shadow-sm mt-0.5"
               />
               <div className="flex-1 min-w-0">
-                <p className="text-slate-300 leading-snug">
-                  <span className="font-semibold text-slate-100">{act.user?.name}</span>{' '}
+                <p className="text-[#48404b] leading-snug">
+                  <span className="font-bold text-[#383139]">{act.user?.name}</span>{' '}
                   {renderActionText(act)}
                 </p>
-                <span className="text-[10px] text-slate-500 mt-1 block">
+                <span className="text-[10px] font-semibold text-[#8e8a94] mt-1 block">
                   {new Date(act.createdAt).toLocaleTimeString([], {
                     hour: '2-digit',
                     minute: '2-digit',

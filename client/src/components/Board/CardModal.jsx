@@ -103,68 +103,68 @@ export const CardModal = ({
   };
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-950/80 backdrop-blur-sm animate-in fade-in duration-200">
-      <div className="bg-slate-900 border border-slate-800 rounded-2xl w-full max-w-lg shadow-2xl overflow-hidden flex flex-col max-h-[90vh]">
+    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-[#383139]/40 backdrop-blur-sm animate-in fade-in duration-180">
+      <div className="bg-[#fffdf7] border border-white rounded-[38px] w-full max-w-lg shadow-[0_24px_60px_-15px_rgba(56,49,57,0.2),inset_3px_3px_6px_rgba(255,255,255,0.95),inset_-3px_-3px_8px_rgba(56,49,57,0.05)] overflow-hidden flex flex-col max-h-[90vh]">
         {/* Header */}
-        <div className="px-6 py-4 border-b border-slate-800 flex items-center justify-between">
+        <div className="px-7 py-5 border-b border-[#f1f2fa] flex items-center justify-between">
           <div className="flex items-center gap-2">
-            <span className="text-xs font-semibold uppercase tracking-wider px-2 py-0.5 rounded-full bg-indigo-500/10 text-indigo-400 border border-indigo-500/20">
+            <span className="text-xs font-bold uppercase tracking-wider px-3.5 py-1 rounded-full bg-[#ded0f9] text-[#4b3378] shadow-[0_3px_8px_-2px_rgba(222,208,249,0.7),inset_1px_1px_2px_rgba(255,255,255,0.8),inset_-1px_-1px_2px_rgba(130,100,180,0.15)]">
               Task Details
             </span>
           </div>
           <button
             onClick={onClose}
-            className="p-1 rounded-lg text-slate-400 hover:text-white hover:bg-slate-800 transition-colors"
+            className="w-9 h-9 rounded-full bg-[#f1f2fa] hover:bg-[#e4e6f4] text-[#383139] shadow-[0_3px_8px_-2px_rgba(56,49,57,0.08),inset_1.5px_1.5px_3px_rgba(255,255,255,0.95),inset_-1.5px_-1.5px_3px_rgba(56,49,57,0.06)] active:scale-95 transition-all flex items-center justify-center"
           >
-            <X className="w-5 h-5" />
+            <X className="w-4 h-4 stroke-[2.5]" />
           </button>
         </div>
 
         {/* Content / Form */}
-        <form onSubmit={handleSubmit} className="p-6 overflow-y-auto space-y-4 flex-1">
+        <form onSubmit={handleSubmit} className="p-7 overflow-y-auto space-y-4 flex-1">
           {error && (
-            <div className="p-3 rounded-lg bg-rose-500/10 border border-rose-500/30 text-rose-400 text-xs flex items-center gap-2">
+            <div className="p-3.5 rounded-2xl bg-[#fcd2df] text-[#8c2340] text-xs font-semibold flex items-center gap-2 shadow-[inset_1.5px_1.5px_3px_rgba(180,60,90,0.15)]">
               <AlertCircle className="w-4 h-4 shrink-0" />
               <span>{error}</span>
             </div>
           )}
 
           <div>
-            <label className="block text-xs font-semibold text-slate-300 mb-1.5 uppercase tracking-wider">
+            <label className="block text-xs font-bold text-[#383139] mb-1.5 uppercase tracking-wider">
               Title
             </label>
             <input
               type="text"
               value={title}
               onChange={(e) => setTitle(e.target.value)}
-              className="w-full px-3.5 py-2.5 rounded-xl bg-slate-800/80 border border-slate-700 text-slate-100 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500 transition-all"
+              className="w-full px-4 py-3 rounded-2xl clay-inset-well text-sm font-semibold transition-all"
               placeholder="e.g. Design User Flow"
               required
             />
           </div>
 
           <div>
-            <label className="block text-xs font-semibold text-slate-300 mb-1.5 uppercase tracking-wider">
+            <label className="block text-xs font-bold text-[#383139] mb-1.5 uppercase tracking-wider">
               Description
             </label>
             <textarea
               rows={4}
               value={description}
               onChange={(e) => setDescription(e.target.value)}
-              className="w-full px-3.5 py-2 rounded-xl bg-slate-800/80 border border-slate-700 text-slate-100 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500 transition-all resize-none"
+              className="w-full px-4 py-3 rounded-2xl clay-inset-well text-sm font-medium transition-all resize-none"
               placeholder="Add details, acceptance criteria, or notes..."
             />
           </div>
 
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
             <div>
-              <label className="block text-xs font-semibold text-slate-300 mb-1.5 uppercase tracking-wider">
+              <label className="block text-xs font-bold text-[#383139] mb-1.5 uppercase tracking-wider">
                 Status
               </label>
               <select
                 value={status}
                 onChange={(e) => setStatus(e.target.value)}
-                className="w-full px-3.5 py-2.5 rounded-xl bg-slate-800 border border-slate-700 text-slate-100 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500"
+                className="w-full px-4 py-3 rounded-2xl clay-inset-well text-sm font-semibold"
               >
                 <option value="todo">To Do</option>
                 <option value="in_progress">In Progress</option>
@@ -173,13 +173,13 @@ export const CardModal = ({
             </div>
 
             <div>
-              <label className="block text-xs font-semibold text-slate-300 mb-1.5 uppercase tracking-wider">
+              <label className="block text-xs font-bold text-[#383139] mb-1.5 uppercase tracking-wider">
                 Priority
               </label>
               <select
                 value={priority}
                 onChange={(e) => setPriority(e.target.value)}
-                className="w-full px-3.5 py-2.5 rounded-xl bg-slate-800 border border-slate-700 text-slate-100 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500"
+                className="w-full px-4 py-3 rounded-2xl clay-inset-well text-sm font-semibold"
               >
                 <option value="low">Low</option>
                 <option value="medium">Medium</option>
@@ -191,13 +191,13 @@ export const CardModal = ({
 
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
             <div>
-              <label className="block text-xs font-semibold text-slate-300 mb-1.5 uppercase tracking-wider">
+              <label className="block text-xs font-bold text-[#383139] mb-1.5 uppercase tracking-wider">
                 Assignee
               </label>
               <select
                 value={assignee}
                 onChange={(e) => setAssignee(e.target.value)}
-                className="w-full px-3.5 py-2.5 rounded-xl bg-slate-800 border border-slate-700 text-slate-100 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500"
+                className="w-full px-4 py-3 rounded-2xl clay-inset-well text-sm font-semibold"
               >
                 <option value="">Unassigned</option>
                 {members &&
@@ -213,34 +213,34 @@ export const CardModal = ({
             </div>
 
             <div>
-              <label className="block text-xs font-semibold text-slate-300 mb-1.5 uppercase tracking-wider">
+              <label className="block text-xs font-bold text-[#383139] mb-1.5 uppercase tracking-wider">
                 Due Date
               </label>
               <input
                 type="date"
                 value={dueDate}
                 onChange={(e) => setDueDate(e.target.value)}
-                className="w-full px-3.5 py-2 rounded-xl bg-slate-800 border border-slate-700 text-slate-100 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500"
+                className="w-full px-4 py-3 rounded-2xl clay-inset-well text-sm font-semibold"
               />
             </div>
           </div>
         </form>
 
         {/* Footer */}
-        <div className="px-6 py-4 border-t border-slate-800 bg-slate-900/50 flex items-center justify-between">
+        <div className="px-7 py-5 border-t border-[#f1f2fa] bg-[#faf9fe] flex items-center justify-between">
           <button
             type="button"
             onClick={handleDelete}
-            className="flex items-center gap-1.5 px-3 py-2 rounded-xl text-rose-400 hover:bg-rose-950/40 text-xs font-semibold transition-colors"
+            className="flex items-center gap-1.5 px-4 py-2 rounded-full bg-[#fcd2df] hover:bg-[#fabecf] text-[#8c2340] text-xs font-bold shadow-[0_3px_8px_-2px_rgba(252,210,223,0.7),inset_1px_1px_2px_rgba(255,255,255,0.8),inset_-1px_-1px_2px_rgba(180,60,90,0.15)] active:scale-95 transition-all"
           >
-            <Trash2 className="w-4 h-4" /> Delete Task
+            <Trash2 className="w-3.5 h-3.5" /> Delete Task
           </button>
 
-          <div className="flex items-center gap-2">
+          <div className="flex items-center gap-3">
             <button
               type="button"
               onClick={onClose}
-              className="px-4 py-2 rounded-xl text-slate-300 hover:bg-slate-800 text-xs font-semibold transition-colors"
+              className="px-5 py-2.5 rounded-full bg-[#f1f2fa] hover:bg-[#e6e8f5] text-[#383139] text-xs font-bold shadow-[0_3px_8px_-2px_rgba(56,49,57,0.06),inset_1.5px_1.5px_2px_rgba(255,255,255,0.95),inset_-1.5px_-1.5px_2px_rgba(56,49,57,0.06)] active:scale-95 transition-all"
             >
               Cancel
             </button>
@@ -248,7 +248,7 @@ export const CardModal = ({
               type="button"
               onClick={handleSubmit}
               disabled={isSubmitting}
-              className="px-4 py-2 rounded-xl bg-indigo-600 hover:bg-indigo-500 text-white text-xs font-semibold shadow-lg shadow-indigo-600/30 transition-all disabled:opacity-50"
+              className="px-6 py-2.5 rounded-full clay-btn-pill clay-btn-pink text-xs font-bold disabled:opacity-50"
             >
               {isSubmitting ? 'Saving...' : 'Save Changes'}
             </button>

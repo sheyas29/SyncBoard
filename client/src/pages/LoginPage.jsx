@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { Link, useNavigate, useLocation } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext.jsx';
-import { KanbanSquare, LogIn, ArrowRight, AlertCircle, Sparkles } from 'lucide-react';
+import { KanbanSquare, ArrowRight, AlertCircle, Sparkles, CheckCircle2, ShieldCheck, Zap } from 'lucide-react';
 
 export const LoginPage = () => {
   const [email, setEmail] = useState('');
@@ -45,11 +45,9 @@ export const LoginPage = () => {
     setPassword(demoPassword);
 
     try {
-      // Try login first
       await login(demoEmail, demoPassword);
       navigate('/dashboard');
     } catch {
-      // If demo user does not exist in DB yet, auto-register for reviewer convenience!
       try {
         await register(demoName, demoEmail, demoPassword);
         navigate('/dashboard');
@@ -62,127 +60,147 @@ export const LoginPage = () => {
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center p-4 bg-gradient-to-br from-slate-950 via-slate-900 to-indigo-950/40 relative overflow-hidden">
-      {/* Background glow effects */}
-      <div className="absolute top-1/4 left-1/4 w-96 h-96 bg-indigo-500/10 rounded-full blur-3xl pointer-events-none" />
-      <div className="absolute bottom-1/4 right-1/4 w-96 h-96 bg-cyan-500/10 rounded-full blur-3xl pointer-events-none" />
+    <div className="min-h-screen bg-[#f1f2fa] text-[#383139] flex items-center justify-center p-4 sm:p-6 lg:p-8">
+      <div className="w-full max-w-4xl grid grid-cols-1 lg:grid-cols-12 gap-6 items-stretch">
+        {/* Left Side: Claymorphic Pink Cushion Hero */}
+        <div className="lg:col-span-5 rounded-[40px] bg-[#f6a3ca] shadow-[0_20px_40px_-10px_rgba(246,163,202,0.6),inset_4px_4px_8px_rgba(255,255,255,0.85),inset_-4px_-4px_10px_rgba(180,80,130,0.25)] p-8 sm:p-10 flex flex-col justify-between relative overflow-hidden text-[#383139]">
+          {/* Molded Decorative Overlapping Objects */}
+          <div className="absolute -top-6 -right-6 w-32 h-32 rounded-full bg-[#ded0f9] shadow-[0_10px_25px_-5px_rgba(222,208,249,0.7),inset_3px_3px_6px_rgba(255,255,255,0.9),inset_-3px_-3px_6px_rgba(130,100,180,0.2)] pointer-events-none" />
+          <div className="absolute top-24 -right-4 w-20 h-20 rounded-full bg-[#c0efdc] shadow-[0_10px_25px_-5px_rgba(192,239,220,0.7),inset_2px_2px_4px_rgba(255,255,255,0.9),inset_-2px_-2px_4px_rgba(90,160,130,0.2)] pointer-events-none" />
+          <div className="absolute -bottom-8 -left-8 w-36 h-36 rounded-full bg-[#f9e7a8] shadow-[0_10px_25px_-5px_rgba(249,231,168,0.7),inset_3px_3px_6px_rgba(255,255,255,0.9),inset_-3px_-3px_6px_rgba(180,150,60,0.2)] pointer-events-none" />
 
-      <div className="w-full max-w-md relative z-10">
-        {/* Header */}
-        <div className="text-center mb-8">
-          <div className="inline-flex w-12 h-12 rounded-2xl bg-gradient-to-tr from-indigo-600 to-cyan-400 items-center justify-center shadow-xl shadow-indigo-500/25 mb-4">
-            <KanbanSquare className="w-6 h-6 text-white" />
-          </div>
-          <h1 className="text-3xl font-extrabold text-white tracking-tight">
-            SyncBoard
-          </h1>
-          <p className="text-sm text-slate-400 mt-2">
-            Real-time collaborative task management
-          </p>
-        </div>
-
-        {/* Card */}
-        <div className="bg-slate-900/80 backdrop-blur-xl border border-slate-800 rounded-3xl p-8 shadow-2xl">
-          <h2 className="text-xl font-bold text-white mb-2">Sign in to your account</h2>
-          <p className="text-xs text-slate-400 mb-6">
-            Enter your credentials or click a demo account below
-          </p>
-
-          {isExpired && (
-            <div className="mb-4 p-3 rounded-xl bg-amber-500/10 border border-amber-500/30 text-amber-400 text-xs flex items-center gap-2">
-              <AlertCircle className="w-4 h-4 shrink-0" />
-              <span>Your previous session expired. Please sign in again.</span>
-            </div>
-          )}
-
-          {error && (
-            <div className="mb-4 p-3 rounded-xl bg-rose-500/10 border border-rose-500/30 text-rose-400 text-xs flex items-center gap-2">
-              <AlertCircle className="w-4 h-4 shrink-0" />
-              <span>{error}</span>
-            </div>
-          )}
-
-          <form onSubmit={handleSubmit} className="space-y-4">
-            <div>
-              <label className="block text-xs font-semibold text-slate-300 mb-1.5 uppercase tracking-wider">
-                Email Address
-              </label>
-              <input
-                type="email"
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
-                placeholder="name@company.com"
-                className="w-full px-4 py-3 rounded-xl bg-slate-800/80 border border-slate-700 text-slate-100 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500 transition-all placeholder:text-slate-500"
-                required
-              />
+          {/* Top Branding */}
+          <div className="relative z-10">
+            <div className="w-14 h-14 rounded-full bg-[#fffdf7] shadow-[0_8px_20px_-4px_rgba(56,49,57,0.12),inset_2px_2px_4px_rgba(255,255,255,0.95),inset_-2px_-2px_4px_rgba(56,49,57,0.06)] flex items-center justify-center mb-6">
+              <KanbanSquare className="w-7 h-7 text-[#383139]" />
             </div>
 
-            <div>
-              <label className="block text-xs font-semibold text-slate-300 mb-1.5 uppercase tracking-wider">
-                Password
-              </label>
-              <input
-                type="password"
-                value={password}
-                onChange={(e) => setPassword(e.target.value)}
-                placeholder="••••••••"
-                className="w-full px-4 py-3 rounded-xl bg-slate-800/80 border border-slate-700 text-slate-100 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500 transition-all placeholder:text-slate-500"
-                required
-              />
-            </div>
-
-            <button
-              type="submit"
-              disabled={loading}
-              className="w-full py-3.5 px-4 rounded-xl bg-gradient-to-r from-indigo-600 to-indigo-500 hover:from-indigo-500 hover:to-indigo-400 text-white font-semibold text-sm shadow-lg shadow-indigo-600/30 hover:shadow-indigo-600/50 transition-all active:scale-[0.99] disabled:opacity-50 flex items-center justify-center gap-2"
-            >
-              {loading ? (
-                <span>Authenticating...</span>
-              ) : (
-                <>
-                  <span>Sign In</span>
-                  <ArrowRight className="w-4 h-4" />
-                </>
-              )}
-            </button>
-          </form>
-
-          {/* Quick-fill for Reviewer / Multi-tab Collaboration Testing */}
-          <div className="mt-6 pt-6 border-t border-slate-800">
-            <div className="flex items-center gap-1.5 text-xs font-semibold text-slate-400 mb-3">
-              <Sparkles className="w-3.5 h-3.5 text-indigo-400" />
-              <span>One-Click Test Reviewer Profiles:</span>
-            </div>
-            <div className="grid grid-cols-2 gap-2.5">
-              <button
-                type="button"
-                onClick={() => handleQuickDemo('Alex Rivera', 'alex@syncboard.dev', 'alex123456')}
-                className="px-3 py-2 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-200 text-xs font-medium border border-slate-700/80 transition-colors text-left"
-              >
-                <div className="font-semibold text-indigo-400">User 1 (Alex)</div>
-                <div className="text-[10px] text-slate-400">alex@syncboard.dev</div>
-              </button>
-
-              <button
-                type="button"
-                onClick={() => handleQuickDemo('Taylor Swift', 'taylor@syncboard.dev', 'taylor123456')}
-                className="px-3 py-2 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-200 text-xs font-medium border border-slate-700/80 transition-colors text-left"
-              >
-                <div className="font-semibold text-cyan-400">User 2 (Taylor)</div>
-                <div className="text-[10px] text-slate-400">taylor@syncboard.dev</div>
-              </button>
-            </div>
-            <p className="text-[11px] text-slate-500 mt-2 text-center">
-              Tip: Open an Incognito window with User 2 to test real-time board collaboration live!
+            <h1 className="text-3xl sm:text-4xl font-extrabold tracking-tight text-[#383139] leading-tight">
+              Molded for Instant Collaboration.
+            </h1>
+            <p className="text-sm font-medium text-[#48404b] mt-3 leading-relaxed">
+              Real-time Kanban task management with tactile drag-and-drop, WebSocket live sync, and multi-user workspaces.
             </p>
           </div>
 
+          {/* Feature Highlights on Pastel Cushions */}
+          <div className="relative z-10 space-y-2.5 mt-8">
+            <div className="px-4 py-2.5 rounded-full bg-white/70 shadow-[0_4px_12px_-2px_rgba(56,49,57,0.08),inset_1.5px_1.5px_3px_rgba(255,255,255,0.95),inset_-1.5px_-1.5px_3px_rgba(56,49,57,0.05)] flex items-center gap-2.5 text-xs font-bold text-[#383139]">
+              <Zap className="w-4 h-4 text-[#1b8a5a]" />
+              <span>Real-Time WebSocket Sync</span>
+            </div>
+            <div className="px-4 py-2.5 rounded-full bg-white/70 shadow-[0_4px_12px_-2px_rgba(56,49,57,0.08),inset_1.5px_1.5px_3px_rgba(255,255,255,0.95),inset_-1.5px_-1.5px_3px_rgba(56,49,57,0.05)] flex items-center gap-2.5 text-xs font-bold text-[#383139]">
+              <ShieldCheck className="w-4 h-4 text-[#5b3b9b]" />
+              <span>Strict Role-Based Access</span>
+            </div>
+          </div>
+        </div>
+
+        {/* Right Side: Cream Reading Tray Login Form */}
+        <div className="lg:col-span-7 rounded-[40px] bg-[#fffdf7] border border-white shadow-[0_20px_45px_-12px_rgba(56,49,57,0.1),inset_3px_3px_6px_rgba(255,255,255,0.95),inset_-3px_-3px_8px_rgba(56,49,57,0.04)] p-8 sm:p-10 flex flex-col justify-between">
+          <div>
+            <div className="mb-6">
+              <h2 className="text-2xl font-bold text-[#383139] tracking-tight">
+                Sign in to SyncBoard
+              </h2>
+              <p className="text-xs font-medium text-[#48404b] mt-1">
+                Enter your credentials or test with one-click reviewer profiles
+              </p>
+            </div>
+
+            {isExpired && (
+              <div className="mb-4 p-3.5 rounded-2xl bg-[#f9e7a8] text-[#6e5614] text-xs font-semibold flex items-center gap-2 shadow-[inset_1.5px_1.5px_3px_rgba(180,150,60,0.15)]">
+                <AlertCircle className="w-4 h-4 shrink-0" />
+                <span>Your previous session expired. Please sign in again.</span>
+              </div>
+            )}
+
+            {error && (
+              <div className="mb-4 p-3.5 rounded-2xl bg-[#fcd2df] text-[#8c2340] text-xs font-semibold flex items-center gap-2 shadow-[inset_1.5px_1.5px_3px_rgba(180,60,90,0.15)]">
+                <AlertCircle className="w-4 h-4 shrink-0" />
+                <span>{error}</span>
+              </div>
+            )}
+
+            <form onSubmit={handleSubmit} className="space-y-4">
+              <div>
+                <label className="block text-xs font-bold text-[#383139] mb-1.5 uppercase tracking-wider">
+                  Email Address
+                </label>
+                <input
+                  type="email"
+                  value={email}
+                  onChange={(e) => setEmail(e.target.value)}
+                  placeholder="name@company.com"
+                  className="w-full px-4 py-3 rounded-2xl clay-inset-well text-sm font-semibold transition-all placeholder:text-[#8e8a94]"
+                  required
+                />
+              </div>
+
+              <div>
+                <label className="block text-xs font-bold text-[#383139] mb-1.5 uppercase tracking-wider">
+                  Password
+                </label>
+                <input
+                  type="password"
+                  value={password}
+                  onChange={(e) => setPassword(e.target.value)}
+                  placeholder="••••••••"
+                  className="w-full px-4 py-3 rounded-2xl clay-inset-well text-sm font-semibold transition-all placeholder:text-[#8e8a94]"
+                  required
+                />
+              </div>
+
+              <button
+                type="submit"
+                disabled={loading}
+                className="w-full py-3.5 px-6 rounded-full clay-btn-pill clay-btn-pink text-sm font-bold shadow-[0_10px_20px_-5px_rgba(246,163,202,0.5)] active:scale-[0.99] disabled:opacity-50 mt-2"
+              >
+                {loading ? (
+                  <span>Authenticating...</span>
+                ) : (
+                  <>
+                    <span>Sign In</span>
+                    <ArrowRight className="w-4 h-4" />
+                  </>
+                )}
+              </button>
+            </form>
+
+            {/* Quick Demo Reviewer Profiles */}
+            <div className="mt-6 pt-5 border-t border-[#f1f2fa]">
+              <div className="flex items-center gap-1.5 text-xs font-bold text-[#48404b] mb-3">
+                <Sparkles className="w-4 h-4 text-[#e273a5]" />
+                <span>One-Click Test Reviewer Profiles:</span>
+              </div>
+              <div className="grid grid-cols-2 gap-3">
+                <button
+                  type="button"
+                  onClick={() => handleQuickDemo('Alex Rivera', 'alex@syncboard.dev', 'alex123456')}
+                  className="p-3 rounded-2xl bg-[#c0efdc] hover:bg-[#b0ebd3] text-left shadow-[0_6px_14px_-3px_rgba(192,239,220,0.6),inset_1.5px_1.5px_3px_rgba(255,255,255,0.85),inset_-1.5px_-1.5px_3px_rgba(90,160,130,0.18)] active:scale-95 transition-all"
+                >
+                  <div className="font-bold text-xs text-[#1c573c]">User 1 (Alex)</div>
+                  <div className="text-[11px] text-[#2e7454] font-medium">alex@syncboard.dev</div>
+                </button>
+
+                <button
+                  type="button"
+                  onClick={() => handleQuickDemo('Taylor Swift', 'taylor@syncboard.dev', 'taylor123456')}
+                  className="p-3 rounded-2xl bg-[#ded0f9] hover:bg-[#d4c2f6] text-left shadow-[0_6px_14px_-3px_rgba(222,208,249,0.6),inset_1.5px_1.5px_3px_rgba(255,255,255,0.85),inset_-1.5px_-1.5px_3px_rgba(130,100,180,0.18)] active:scale-95 transition-all"
+                >
+                  <div className="font-bold text-xs text-[#4b3378]">User 2 (Taylor)</div>
+                  <div className="text-[11px] text-[#63469b] font-medium">taylor@syncboard.dev</div>
+                </button>
+              </div>
+            </div>
+          </div>
+
           {/* Register Link */}
-          <div className="mt-6 text-center text-xs text-slate-400">
+          <div className="mt-6 text-center text-xs font-medium text-[#48404b]">
             Don't have an account?{' '}
             <Link
               to="/register"
-              className="text-indigo-400 hover:text-indigo-300 font-semibold hover:underline"
+              className="text-[#c74c83] hover:underline font-bold"
             >
               Sign up
             </Link>

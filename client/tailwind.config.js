@@ -4,23 +4,28 @@ export default {
     "./index.html",
     "./src/**/*.{js,ts,jsx,tsx}",
   ],
-  darkMode: 'class',
   theme: {
     extend: {
       colors: {
-        brand: {
-          50: '#eef2ff',
-          100: '#e0e7ff',
-          200: '#c7d2fe',
-          300: '#a5b4fc',
-          400: '#818cf8',
-          500: '#6366f1',
-          600: '#4f46e5',
-          700: '#4338ca',
-          800: '#3730a3',
-          900: '#312e81',
-          950: '#1e1b4b',
+        clay: {
+          ground: '#f1f2fa',
+          ink: '#383139',
+          'ink-secondary': '#48404b',
+          pink: '#f6a3ca',
+          mint: '#c0efdc',
+          lavender: '#ded0f9',
+          yellow: '#f9e7a8',
+          blue: '#c5e5fb',
+          cream: '#fffdf7',
         },
+      },
+      fontFamily: {
+        sans: ['"Instrument Sans"', 'sans-serif'],
+      },
+      borderRadius: {
+        cushion: '38px',
+        tray: '48px',
+        disclosure: '25px',
       },
     },
   },

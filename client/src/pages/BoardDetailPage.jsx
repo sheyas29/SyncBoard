@@ -16,15 +16,12 @@ import {
   History,
   ShieldAlert,
   Loader2,
-  Filter,
 } from 'lucide-react';
-
-const COLUMN_KEYS = ['todo', 'in_progress', 'done'];
 
 export const BoardDetailPage = () => {
   const { id: boardId } = useParams();
   const { user } = useAuth();
-  const { socket, isConnected } = useSocket();
+  const { socket } = useSocket();
   const navigate = useNavigate();
 
   const [board, setBoard] = useState(null);
@@ -70,29 +67,23 @@ export const BoardDetailPage = () => {
   useEffect(() => {
     if (!socket || !boardId || !user) return;
 
-    // Join board room
     socket.emit('join-board', { boardId, user });
 
-    // Handle real-time card created
-    const handleCardCreated = ({ card, actor }) => {
+    const handleCardCreated = ({ card }) => {
       setCards((prev) => {
-        // Prevent duplicate insertion if current user created it
         if (prev.some((c) => c._id === card._id)) return prev;
         return [...prev, card];
       });
     };
 
-    // Handle real-time card updated
     const handleCardUpdated = ({ card }) => {
       setCards((prev) =>
         prev.map((c) => (c._id === card._id ? card : c))
       );
-      // Also update open modal card if active
       setSelectedCard((current) => (current && current._id === card._id ? card : current));
     };
 
-    // Handle real-time card moved
-    const handleCardMoved = ({ card, fromStatus, toStatus, destinationIndex }) => {
+    const handleCardMoved = ({ card, toStatus, destinationIndex }) => {
       setCards((prev) => {
         const withoutCard = prev.filter((c) => c._id !== card._id);
         const targetColumnCards = withoutCard.filter((c) => c.status === toStatus);
@@ -100,7 +91,6 @@ export const BoardDetailPage = () => {
 
         targetColumnCards.splice(destinationIndex, 0, card);
 
-        // Update orders
         const reorderedTarget = targetColumnCards.map((c, idx) => ({
           ...c,
           status: toStatus,
@@ -111,13 +101,11 @@ export const BoardDetailPage = () => {
       });
     };
 
-    // Handle real-time card deleted
     const handleCardDeleted = ({ cardId }) => {
       setCards((prev) => prev.filter((c) => c._id !== cardId));
       setSelectedCard((current) => (current && current._id === cardId ? null : current));
     };
 
-    // Handle live typing
     const handleCardTyping = ({ cardId, userName, isTyping }) => {
       setTypingUsers((prev) => {
         const next = { ...prev };
@@ -158,14 +146,10 @@ export const BoardDetailPage = () => {
       return;
     }
 
-    const sourceStatus = source.droppableId;
     const destStatus = destination.droppableId;
     const destIndex = destination.index;
-
-    // Snapshot previous cards for rollback if error
     const previousCards = [...cards];
 
-    // Optimistic local state update
     const movingCard = cards.find((c) => c._id === draggableId);
     if (!movingCard) return;
 
@@ -184,7 +168,6 @@ export const BoardDetailPage = () => {
 
     setCards([...otherCards, ...reorderedDestCards]);
 
-    // Send update to server
     try {
       await api.patch(`/cards/${draggableId}/move`, {
         destinationStatus: destStatus,
@@ -192,19 +175,16 @@ export const BoardDetailPage = () => {
       });
     } catch (err) {
       console.error('Failed to persist card move:', err);
-      // Rollback to previous state
       setCards(previousCards);
       alert('Failed to move card: ' + (err.response?.data?.message || err.message));
     }
   };
 
-  // Status Change via button (Accessibility / alternative to drag)
   const handleStatusChange = async (cardId, newStatus) => {
     const previousCards = [...cards];
     const targetCard = cards.find((c) => c._id === cardId);
     if (!targetCard || targetCard.status === newStatus) return;
 
-    // Optimistically update
     setCards((prev) =>
       prev.map((c) => (c._id === cardId ? { ...c, status: newStatus } : c))
     );
@@ -220,7 +200,6 @@ export const BoardDetailPage = () => {
     }
   };
 
-  // Card CRUD Operations
   const handleCreateCard = async (cardData) => {
     const res = await api.post('/cards', cardData);
     if (res.data.success) {
@@ -247,33 +226,31 @@ export const BoardDetailPage = () => {
     setCards((prev) => prev.filter((c) => c._id !== cardId));
   };
 
-  // Group cards by column
   const cardsByColumn = {
     todo: cards.filter((c) => c.status === 'todo').sort((a, b) => a.order - b.order),
     in_progress: cards.filter((c) => c.status === 'in_progress').sort((a, b) => a.order - b.order),
     done: cards.filter((c) => c.status === 'done').sort((a, b) => a.order - b.order),
   };
 
-  // Render Access Denied / Error State
   if (error) {
     return (
-      <div className="min-h-screen bg-slate-950 text-slate-100 flex flex-col">
+      <div className="min-h-screen bg-[#f1f2fa] text-[#383139] flex flex-col font-sans">
         <Navbar />
         <div className="flex-1 flex flex-col items-center justify-center p-6 text-center">
-          <div className="w-16 h-16 rounded-2xl bg-rose-500/10 border border-rose-500/20 flex items-center justify-center mb-4">
-            <ShieldAlert className="w-8 h-8 text-rose-400" />
+          <div className="w-18 h-18 rounded-full bg-[#fcd2df] shadow-[0_10px_25px_-5px_rgba(252,210,223,0.7),inset_2px_2px_4px_rgba(255,255,255,0.85)] flex items-center justify-center mb-5">
+            <ShieldAlert className="w-9 h-9 text-[#8c2340]" />
           </div>
-          <h2 className="text-2xl font-bold text-white mb-2">
+          <h2 className="text-2xl sm:text-3xl font-extrabold text-[#383139] mb-2 tracking-tight">
             {error.status === 403 ? 'Access Restricted' : 'Board Not Found'}
           </h2>
-          <p className="text-sm text-slate-400 max-w-md mb-6">
+          <p className="text-sm font-medium text-[#48404b] max-w-md mb-6 leading-relaxed">
             {error.status === 403
               ? 'You are not authorized to view this private board. Only the owner and invited collaborators can access this workspace.'
               : error.message}
           </p>
           <Link
             to="/dashboard"
-            className="flex items-center gap-2 px-5 py-2.5 rounded-xl bg-indigo-600 hover:bg-indigo-500 text-white font-semibold text-xs shadow-lg shadow-indigo-600/30 transition-all"
+            className="px-6 py-3 rounded-full clay-btn-pill clay-btn-pink text-xs font-bold"
           >
             <ArrowLeft className="w-4 h-4" /> Back to My Boards
           </Link>
@@ -283,7 +260,7 @@ export const BoardDetailPage = () => {
   }
 
   return (
-    <div className="min-h-screen bg-slate-950 text-slate-100 flex flex-col">
+    <div className="min-h-screen bg-[#f1f2fa] text-[#383139] flex flex-col font-sans">
       <Navbar
         currentBoardTitle={board?.title}
         onToggleActivity={() => setIsActivityOpen(!isActivityOpen)}
@@ -292,30 +269,30 @@ export const BoardDetailPage = () => {
 
       {loading ? (
         <div className="flex-1 flex items-center justify-center">
-          <div className="flex items-center gap-3 text-indigo-400 text-sm font-medium">
-            <Loader2 className="w-6 h-6 animate-spin" />
+          <div className="flex items-center gap-3 px-6 py-3 rounded-full bg-[#fffdf7] shadow-[0_10px_25px_-5px_rgba(56,49,57,0.08),inset_2px_2px_4px_rgba(255,255,255,0.95)] text-sm font-bold text-[#383139]">
+            <Loader2 className="w-5 h-5 animate-spin text-[#c74c83]" />
             <span>Loading collaborative workspace...</span>
           </div>
         </div>
       ) : (
-        <main className="flex-1 flex flex-col max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-8 py-6">
-          {/* Board Header Bar */}
-          <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 pb-6 border-b border-slate-800/80 mb-6">
+        <main className="flex-1 flex flex-col max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-8 py-5">
+          {/* Board Header Shelf */}
+          <div className="rounded-[34px] bg-[#fffdf7] border border-white shadow-[0_12px_28px_-8px_rgba(56,49,57,0.08),inset_2.5px_2.5px_5px_rgba(255,255,255,0.95),inset_-2.5px_-2.5px_6px_rgba(56,49,57,0.04)] p-5 sm:p-6 mb-6 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
             <div>
               <div className="flex items-center gap-3">
                 <Link
                   to="/dashboard"
-                  className="p-1.5 rounded-lg text-slate-400 hover:text-white hover:bg-slate-800 transition-colors"
+                  className="w-9 h-9 rounded-full bg-[#f1f2fa] hover:bg-[#e4e6f4] text-[#383139] shadow-[0_3px_8px_-2px_rgba(56,49,57,0.08),inset_1.5px_1.5px_3px_rgba(255,255,255,0.95),inset_-1.5px_-1.5px_3px_rgba(56,49,57,0.06)] active:scale-95 transition-all flex items-center justify-center"
                   title="Back to Dashboard"
                 >
-                  <ArrowLeft className="w-5 h-5" />
+                  <ArrowLeft className="w-4 h-4 stroke-[2.5]" />
                 </Link>
-                <h1 className="text-2xl font-extrabold text-white tracking-tight">
+                <h1 className="text-2xl sm:text-3xl font-extrabold text-[#383139] tracking-tight">
                   {board?.title}
                 </h1>
               </div>
               {board?.description && (
-                <p className="text-xs text-slate-400 mt-1 pl-10 max-w-2xl">
+                <p className="text-xs font-medium text-[#48404b] mt-1.5 pl-12 max-w-2xl leading-relaxed">
                   {board.description}
                 </p>
               )}
@@ -325,17 +302,17 @@ export const BoardDetailPage = () => {
             <div className="flex items-center gap-2.5 self-end sm:self-auto">
               <button
                 onClick={() => setIsShareModalOpen(true)}
-                className="flex items-center gap-1.5 px-3.5 py-2 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-200 text-xs font-semibold border border-slate-700 transition-colors shadow-sm"
+                className="px-4 py-2.5 rounded-full clay-btn-pill clay-btn-lavender text-xs font-bold"
               >
-                <UserPlus className="w-4 h-4 text-indigo-400" />
+                <UserPlus className="w-4 h-4 text-[#4b3378]" />
                 <span>Collaborators ({board?.members?.length || 1})</span>
               </button>
 
               <button
                 onClick={() => setIsActivityOpen(true)}
-                className="flex items-center gap-1.5 px-3.5 py-2 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-200 text-xs font-semibold border border-slate-700 transition-colors shadow-sm"
+                className="px-4 py-2.5 rounded-full clay-btn-pill clay-btn-mint text-xs font-bold"
               >
-                <History className="w-4 h-4 text-cyan-400" />
+                <History className="w-4 h-4 text-[#1c573c]" />
                 <span>Activity Log</span>
               </button>
             </div>
