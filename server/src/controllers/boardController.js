@@ -198,6 +198,16 @@ export const deleteBoard = async (req, res, next) => {
     await Activity.deleteMany({ board: board._id });
     await Board.findByIdAndDelete(board._id);
 
+    // Notify connected clients via WebSocket
+    const io = req.app.get('io');
+    if (io) {
+      io.to(board._id.toString()).emit('board:deleted', { boardId: board._id.toString() });
+      board.members.forEach((m) => {
+        const memberId = m.user?._id || m.user;
+        io.to(`user:${memberId}`).emit('board:deleted', { boardId: board._id.toString() });
+      });
+    }
+
     res.status(200).json({
       success: true,
       message: 'Board and all associated cards removed successfully',
@@ -266,6 +276,26 @@ export const addMember = async (req, res, next) => {
     const populatedBoard = await Board.findById(board._id)
       .populate('owner', 'name email avatar')
       .populate('members.user', 'name email avatar');
+
+    // Real-time notification to the invited user and the active board room
+    const io = req.app.get('io');
+    if (io) {
+      const cardCount = await Card.countDocuments({ board: board._id });
+      const boardObj = populatedBoard.toObject();
+      boardObj.cardCount = cardCount;
+
+      // 1. Send direct event to the invited user's personal room
+      io.to(`user:${userToAdd._id.toString()}`).emit('board:invited', {
+        board: boardObj,
+        invitedBy: { _id: req.user._id, name: req.user.name },
+      });
+
+      // 2. Notify collaborators viewing this board
+      io.to(board._id.toString()).emit('board:member_added', {
+        board: populatedBoard,
+        addedUser: userToAdd,
+      });
+    }
 
     res.status(200).json({
       success: true,

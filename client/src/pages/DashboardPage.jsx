@@ -1,6 +1,7 @@
-import React, { useState, useEffect } from 'react';
-import { Link } from 'react-router-dom';
+import React, { useState, useEffect, useCallback } from 'react';
+import { Link, useLocation } from 'react-router-dom';
 import { Navbar } from '../components/Navbar.jsx';
+import { useSocket } from '../context/SocketContext.jsx';
 import api from '../api/client.js';
 import {
   Plus,
@@ -13,6 +14,7 @@ import {
   FolderKanban,
   ExternalLink,
   Sparkles,
+  Bell,
 } from 'lucide-react';
 
 export const DashboardPage = () => {
@@ -24,8 +26,13 @@ export const DashboardPage = () => {
   const [newDescription, setNewDescription] = useState('');
   const [createError, setCreateError] = useState('');
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [inviteNotification, setInviteNotification] = useState(null);
 
-  const fetchBoards = async () => {
+  const { socket } = useSocket();
+  const location = useLocation();
+
+  const fetchBoards = useCallback(async (isSilent = false) => {
+    if (!isSilent) setLoading(true);
     try {
       const res = await api.get('/boards');
       if (res.data.success) {
@@ -34,13 +41,58 @@ export const DashboardPage = () => {
     } catch (err) {
       console.error('Failed to load boards:', err);
     } finally {
-      setLoading(false);
+      if (!isSilent) setLoading(false);
     }
-  };
+  }, []);
 
+  // Automatically refresh when navigating to the main page or switching tabs
   useEffect(() => {
     fetchBoards();
-  }, []);
+
+    const handleFocus = () => {
+      fetchBoards(true);
+    };
+
+    window.addEventListener('focus', handleFocus);
+    return () => {
+      window.removeEventListener('focus', handleFocus);
+    };
+  }, [fetchBoards, location.key]);
+
+  // Real-time socket listener for instant board invitation without refresh
+  useEffect(() => {
+    if (!socket) return;
+
+    const handleBoardInvited = ({ board, invitedBy }) => {
+      setBoards((prev) => {
+        if (prev.some((b) => b._id === board._id)) return prev;
+        return [board, ...prev];
+      });
+
+      // Show friendly animated toast notification
+      setInviteNotification({
+        title: board.title,
+        invitedBy: invitedBy?.name || 'A team member',
+        boardId: board._id,
+      });
+
+      setTimeout(() => {
+        setInviteNotification(null);
+      }, 7000);
+    };
+
+    const handleBoardDeleted = ({ boardId }) => {
+      setBoards((prev) => prev.filter((b) => b._id !== boardId));
+    };
+
+    socket.on('board:invited', handleBoardInvited);
+    socket.on('board:deleted', handleBoardDeleted);
+
+    return () => {
+      socket.off('board:invited', handleBoardInvited);
+      socket.off('board:deleted', handleBoardDeleted);
+    };
+  }, [socket]);
 
   const handleCreateBoard = async (e) => {
     e.preventDefault();
@@ -93,6 +145,36 @@ export const DashboardPage = () => {
   return (
     <div className="min-h-screen bg-[#f1f2fa] text-[#383139] flex flex-col font-sans">
       <Navbar />
+
+      {/* Real-Time Live Invite Notification Toast */}
+      {inviteNotification && (
+        <div className="fixed bottom-6 right-6 z-50 animate-in slide-in-from-bottom duration-300 max-w-sm">
+          <div className="p-4 rounded-[26px] bg-[#fffdf7] border-2 border-[#f6a3ca] shadow-[0_18px_40px_-10px_rgba(246,163,202,0.6),inset_2px_2px_4px_rgba(255,255,255,0.95)] flex items-start gap-3">
+            <div className="w-9 h-9 rounded-full bg-[#f6a3ca] flex items-center justify-center text-[#383139] shrink-0 shadow-sm mt-0.5">
+              <Bell className="w-5 h-5 animate-bounce" />
+            </div>
+            <div className="flex-1 min-w-0">
+              <h4 className="text-xs font-bold text-[#383139]">New Workspace Invitation!</h4>
+              <p className="text-xs text-[#48404b] mt-0.5">
+                <span className="font-bold">{inviteNotification.invitedBy}</span> added you to{' '}
+                <span className="font-bold text-[#c74c83]">"{inviteNotification.title}"</span>.
+              </p>
+              <Link
+                to={`/board/${inviteNotification.boardId}`}
+                className="inline-block mt-2 px-3.5 py-1 rounded-full bg-[#ded0f9] text-[#4b3378] text-[11px] font-bold shadow-sm hover:bg-[#d4c2f6] transition-colors"
+              >
+                Open Workspace →
+              </Link>
+            </div>
+            <button
+              onClick={() => setInviteNotification(null)}
+              className="text-[#8e8a94] hover:text-[#383139] text-xs font-bold p-1"
+            >
+              ✕
+            </button>
+          </div>
+        </div>
+      )}
 
       <main className="flex-1 max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-8 py-6">
         {/* Claymorphic Hero Cushion */}

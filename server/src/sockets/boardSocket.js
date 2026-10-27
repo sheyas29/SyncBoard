@@ -5,6 +5,15 @@ export const setupBoardSocket = (io) => {
   io.on('connection', (socket) => {
     console.log(`[Socket] Client connected: ${socket.id}`);
 
+    // User identifies themselves to join personal room for real-time invites/notifications
+    socket.on('identify-user', ({ userId }) => {
+      if (!userId) return;
+      const userRoom = `user:${userId.toString()}`;
+      socket.join(userRoom);
+      socket.userId = userId.toString();
+      console.log(`[Socket] Client ${socket.id} joined personal room: ${userRoom}`);
+    });
+
     // User joins a specific board room
     socket.on('join-board', ({ boardId, user }) => {
       if (!boardId) return;

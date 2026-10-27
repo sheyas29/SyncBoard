@@ -1,9 +1,11 @@
 import React, { createContext, useContext, useEffect, useState } from 'react';
 import { io } from 'socket.io-client';
+import { useAuth } from './AuthContext.jsx';
 
 const SocketContext = createContext(null);
 
 export const SocketProvider = ({ children }) => {
+  const { user } = useAuth();
   const [socket, setSocket] = useState(null);
   const [connectionStatus, setConnectionStatus] = useState('connecting'); // 'connected' | 'connecting' | 'disconnected'
   const [activeUsers, setActiveUsers] = useState([]);
@@ -21,6 +23,9 @@ export const SocketProvider = ({ children }) => {
     newSocket.on('connect', () => {
       console.log(`[Socket.io] Connected to server with ID: ${newSocket.id}`);
       setConnectionStatus('connected');
+      if (user?._id) {
+        newSocket.emit('identify-user', { userId: user._id });
+      }
     });
 
     newSocket.on('disconnect', (reason) => {
@@ -47,6 +52,12 @@ export const SocketProvider = ({ children }) => {
       newSocket.disconnect();
     };
   }, []);
+
+  useEffect(() => {
+    if (socket && connectionStatus === 'connected' && user?._id) {
+      socket.emit('identify-user', { userId: user._id });
+    }
+  }, [socket, connectionStatus, user]);
 
   return (
     <SocketContext.Provider value={{ socket, connectionStatus, isConnected: connectionStatus === 'connected', activeUsers }}>

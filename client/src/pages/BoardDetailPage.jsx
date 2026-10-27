@@ -16,6 +16,7 @@ import {
   History,
   ShieldAlert,
   Loader2,
+  Bell,
 } from 'lucide-react';
 
 export const BoardDetailPage = () => {
@@ -28,6 +29,7 @@ export const BoardDetailPage = () => {
   const [cards, setCards] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+  const [inviteNotification, setInviteNotification] = useState(null);
 
   // Modals state
   const [selectedCard, setSelectedCard] = useState(null);
@@ -118,11 +120,37 @@ export const BoardDetailPage = () => {
       });
     };
 
+    const handleBoardMemberAdded = ({ board: updatedBoard }) => {
+      setBoard(updatedBoard);
+    };
+
+    const handleBoardDeleted = ({ boardId: deletedId }) => {
+      if (deletedId === boardId) {
+        alert('This board has been removed by the owner.');
+        navigate('/dashboard');
+      }
+    };
+
+    const handleBoardInvited = ({ board: newBoard, invitedBy }) => {
+      setInviteNotification({
+        title: newBoard.title,
+        invitedBy: invitedBy?.name || 'A team member',
+        boardId: newBoard._id,
+      });
+
+      setTimeout(() => {
+        setInviteNotification(null);
+      }, 7000);
+    };
+
     socket.on('card:created', handleCardCreated);
     socket.on('card:updated', handleCardUpdated);
     socket.on('card:moved', handleCardMoved);
     socket.on('card:deleted', handleCardDeleted);
     socket.on('card:typing', handleCardTyping);
+    socket.on('board:member_added', handleBoardMemberAdded);
+    socket.on('board:deleted', handleBoardDeleted);
+    socket.on('board:invited', handleBoardInvited);
 
     return () => {
       socket.emit('leave-board', { boardId, user });
@@ -131,8 +159,11 @@ export const BoardDetailPage = () => {
       socket.off('card:moved', handleCardMoved);
       socket.off('card:deleted', handleCardDeleted);
       socket.off('card:typing', handleCardTyping);
+      socket.off('board:member_added', handleBoardMemberAdded);
+      socket.off('board:deleted', handleBoardDeleted);
+      socket.off('board:invited', handleBoardInvited);
     };
-  }, [socket, boardId, user]);
+  }, [socket, boardId, user, navigate]);
 
   // Drag and Drop Handler
   const handleDragEnd = async (result) => {
@@ -266,6 +297,36 @@ export const BoardDetailPage = () => {
         onToggleActivity={() => setIsActivityOpen(!isActivityOpen)}
         hasActivityDrawer={true}
       />
+
+      {/* Real-Time Live Invite Notification Toast */}
+      {inviteNotification && (
+        <div className="fixed bottom-6 right-6 z-50 animate-in slide-in-from-bottom duration-300 max-w-sm">
+          <div className="p-4 rounded-[26px] bg-[#fffdf7] border-2 border-[#f6a3ca] shadow-[0_18px_40px_-10px_rgba(246,163,202,0.6),inset_2px_2px_4px_rgba(255,255,255,0.95)] flex items-start gap-3">
+            <div className="w-9 h-9 rounded-full bg-[#f6a3ca] flex items-center justify-center text-[#383139] shrink-0 shadow-sm mt-0.5">
+              <Bell className="w-5 h-5 animate-bounce" />
+            </div>
+            <div className="flex-1 min-w-0">
+              <h4 className="text-xs font-bold text-[#383139]">New Workspace Invitation!</h4>
+              <p className="text-xs text-[#48404b] mt-0.5">
+                <span className="font-bold">{inviteNotification.invitedBy}</span> added you to{' '}
+                <span className="font-bold text-[#c74c83]">"{inviteNotification.title}"</span>.
+              </p>
+              <Link
+                to={`/board/${inviteNotification.boardId}`}
+                className="inline-block mt-2 px-3.5 py-1 rounded-full bg-[#ded0f9] text-[#4b3378] text-[11px] font-bold shadow-sm hover:bg-[#d4c2f6] transition-colors"
+              >
+                Open Workspace →
+              </Link>
+            </div>
+            <button
+              onClick={() => setInviteNotification(null)}
+              className="text-[#8e8a94] hover:text-[#383139] text-xs font-bold p-1"
+            >
+              ✕
+            </button>
+          </div>
+        </div>
+      )}
 
       {loading ? (
         <div className="flex-1 flex items-center justify-center">
