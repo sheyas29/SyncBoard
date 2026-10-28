@@ -1,0 +1,23 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" width="64" height="64">
+  <defs>
+    <linearGradient id="cushionGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#ffb8d9" />
+      <stop offset="100%" stop-color="#f6a3ca" />
+    </linearGradient>
+    <filter id="clayShadow" x="-10%" y="-10%" width="130%" height="130%">
+      <feDropShadow dx="0" dy="3" stdDeviation="3" flood-color="#b45082" flood-opacity="0.35" />
+    </filter>
+  </defs>
+
+  <!-- Circular Clay Cushion Badge matching Navbar logo -->
+  <circle cx="32" cy="32" r="27" fill="url(#cushionGrad)" filter="url(#clayShadow)" />
+  <circle cx="32" cy="32" r="26.5" fill="none" stroke="#ffffff" stroke-width="1.5" stroke-opacity="0.85" />
+
+  <!-- Kanban Outer Frame -->
+  <rect x="18" y="18" width="28" height="28" rx="6" fill="none" stroke="#383139" stroke-width="2.8" stroke-linecap="round" stroke-linejoin="round" />
+  
+  <!-- Kanban Column Strips -->
+  <rect x="23" y="24" width="4" height="12" rx="1.5" fill="#383139" />
+  <rect x="30" y="24" width="4" height="17" rx="1.5" fill="#383139" />
+  <rect x="37" y="24" width="4" height="8" rx="1.5" fill="#383139" />
+</svg>
