@@ -5,9 +5,16 @@
 ---
 
 ## 🚀 Live Demo & Documentation Links
-- **Interactive Swagger/OpenAPI Docs**: [http://localhost:5000/api-docs](http://localhost:5000/api-docs)
-- **Local Application URL**: [http://localhost:5173](http://localhost:5173)
-- **Backend Health Check**: [http://localhost:5000/health](http://localhost:5000/health)
+
+| Resource | Live Production Link | Local Development Link |
+| :--- | :--- | :--- |
+| **Frontend Web App** | **[syncboard-client-xkpi.onrender.com](https://syncboard-client-xkpi.onrender.com)** | [http://localhost:5173](http://localhost:5173) |
+| **Backend API Server** | **[syncboard-api-zawe.onrender.com](https://syncboard-api-zawe.onrender.com)** | [http://localhost:5000](http://localhost:5000) |
+| **Interactive Swagger API Docs** | **[syncboard-api-zawe.onrender.com/api-docs](https://syncboard-api-zawe.onrender.com/api-docs)** | [http://localhost:5000/api-docs](http://localhost:5000/api-docs) |
+| **Backend Health Check** | **[syncboard-api-zawe.onrender.com/health](https://syncboard-api-zawe.onrender.com/health)** | [http://localhost:5000/health](http://localhost:5000/health) |
+
+> [!NOTE]
+> *On the free tier, Render automatically spins down services after 15 minutes of inactivity. If visiting the live app for the first time in a while, please allow ~30 seconds for the backend instance to spin up.*
 
 ---
 
@@ -184,26 +191,30 @@ npm run test:server
 
 ---
 
-## 🌐 Production Deployment Guide
+## 🌐 Production Deployment Guide (Render.com)
 
-### Deploying Backend to Render
-1. Push repository to GitHub.
-2. In Render, select **New Web Service** pointing to `server/`.
-3. Set Build Command: `npm install`
-4. Set Start Command: `npm start`
-5. Configure Environment Variables:
-   - `NODE_ENV`: `production`
-   - `MONGO_URI`: `mongodb+srv://<user>:<password>@cluster.mongodb.net/syncboard`
-   - `JWT_SECRET`: `<random-secure-string>`
-   - `CLIENT_URL`: `https://your-frontend-app.vercel.app`
+This application is deployed and hosted on Render:
 
-### Deploying Frontend to Vercel
-1. In Vercel, import the repository and set Root Directory to `client`.
-2. Framework Preset: `Vite`.
-3. Configure Environment Variables:
-   - `VITE_API_URL`: `https://your-backend-app.onrender.com/api`
-   - `VITE_SOCKET_URL`: `https://your-backend-app.onrender.com`
-4. Deploy!
+### 1. Backend Web Service (`syncboard-api`)
+- **Root Directory:** `server`
+- **Build Command:** `npm install`
+- **Start Command:** `node src/server.js`
+- **Environment Variables:**
+  - `NODE_ENV`: `production`
+  - `MONGO_URI`: `mongodb+srv://<credentials>@cluster.mongodb.net/syncboard`
+  - `JWT_SECRET`: `<secure-random-token>`
+  - `JWT_EXPIRE`: `7d`
+  - `CLIENT_URL`: `https://syncboard-client-xkpi.onrender.com`
+
+### 2. Frontend Static Site (`syncboard-client`)
+- **Root Directory:** `client`
+- **Build Command:** `npm install && npm run build`
+- **Publish Directory:** `dist`
+- **Redirects / Rewrites:**
+  - Source: `/*` ➔ Destination: `/index.html` (Action: `Rewrite` for SPA routing)
+- **Environment Variables:**
+  - `VITE_API_URL`: `https://syncboard-api-zawe.onrender.com/api`
+  - `VITE_SOCKET_URL`: `https://syncboard-api-zawe.onrender.com`
 
 ---
 
