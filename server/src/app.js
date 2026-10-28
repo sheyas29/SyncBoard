@@ -13,10 +13,14 @@ dotenv.config();
 
 const app = express();
 
-// CORS configuration
+// CORS configuration — uses CLIENT_URL in production, allows all origins in development
+const allowedOrigins = process.env.CLIENT_URL
+  ? [process.env.CLIENT_URL, 'http://localhost:5173']
+  : '*';
+
 app.use(
   cors({
-    origin: '*',
+    origin: allowedOrigins,
     credentials: true,
     methods: ['GET', 'POST', 'PUT', 'PATCH', 'DELETE', 'OPTIONS'],
     allowedHeaders: ['Content-Type', 'Authorization'],

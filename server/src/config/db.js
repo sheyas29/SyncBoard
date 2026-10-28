@@ -5,6 +5,20 @@ let mongoMemoryServer = null;
 
 export const connectDB = async () => {
   const uri = process.env.MONGO_URI;
+  const isProduction = process.env.NODE_ENV === 'production';
+
+  // In production, connect directly to Atlas — no fallback to in-memory
+  if (isProduction) {
+    if (!uri) {
+      throw new Error('MONGO_URI environment variable is required in production');
+    }
+    console.log(`[DB] Connecting to production MongoDB...`);
+    const conn = await mongoose.connect(uri);
+    console.log(`[DB] MongoDB Connected: ${conn.connection.host}`);
+    return conn;
+  }
+
+  // --- Development mode: try configured URI → localhost → in-memory fallback ---
 
   // Try configured URI first if specified and not default unreachable local without mongod
   if (uri && !uri.includes('localhost:27017')) {
@@ -52,3 +66,4 @@ export const disconnectDB = async () => {
     await mongoMemoryServer.stop();
   }
 };
+

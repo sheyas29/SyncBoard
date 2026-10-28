@@ -9,10 +9,14 @@ const PORT = process.env.PORT || 5000;
 // Create HTTP server
 const httpServer = http.createServer(app);
 
-// Setup Socket.IO
+// Setup Socket.IO with production-aware CORS
+const socketOrigins = process.env.CLIENT_URL
+  ? [process.env.CLIENT_URL, 'http://localhost:5173']
+  : '*';
+
 const io = new SocketIOServer(httpServer, {
   cors: {
-    origin: '*',
+    origin: socketOrigins,
     methods: ['GET', 'POST', 'PATCH', 'PUT', 'DELETE'],
     credentials: true,
   },
