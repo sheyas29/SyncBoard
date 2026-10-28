@@ -52,10 +52,11 @@ setupBoardSocket(io);
 const startServer = async () => {
   try {
     await connectDB();
+    const hostUrl = process.env.RENDER_EXTERNAL_URL || `http://localhost:${PORT}`;
     httpServer.listen(PORT, () => {
       console.log(`=================================================`);
       console.log(`🚀 SyncBoard Server running on port ${PORT}`);
-      console.log(`📚 Swagger API Docs: http://localhost:${PORT}/api-docs`);
+      console.log(`📚 Swagger API Docs: ${hostUrl}/api-docs`);
       console.log(`⚡ WebSocket Server active and listening`);
       console.log(`=================================================`);
     });
