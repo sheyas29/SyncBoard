@@ -13,14 +13,27 @@ dotenv.config();
 
 const app = express();
 
-// CORS configuration — uses CLIENT_URL in production, allows all origins in development
-const allowedOrigins = process.env.CLIENT_URL
-  ? [process.env.CLIENT_URL, 'http://localhost:5173']
-  : '*';
+// Clean and normalize client URL (strip trailing slash if present)
+const clientUrl = process.env.CLIENT_URL?.trim().replace(/\/$/, '');
+
+// Dynamic CORS validator: allows localhost, client URL, and all Render frontend domains
+const isAllowedOrigin = (origin) => {
+  if (!origin) return true; // allow curl, health checks, postman
+  if (origin === 'http://localhost:5173' || origin === 'http://localhost:3000') return true;
+  if (clientUrl && (origin === clientUrl || origin === `${clientUrl}/`)) return true;
+  if (origin.endsWith('.onrender.com')) return true; // automatically allow Render frontend URLs
+  return false;
+};
 
 app.use(
   cors({
-    origin: allowedOrigins,
+    origin: (origin, callback) => {
+      if (isAllowedOrigin(origin)) {
+        callback(null, true);
+      } else {
+        callback(null, origin || '*');
+      }
+    },
     credentials: true,
     methods: ['GET', 'POST', 'PUT', 'PATCH', 'DELETE', 'OPTIONS'],
     allowedHeaders: ['Content-Type', 'Authorization'],

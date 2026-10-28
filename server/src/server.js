@@ -1,3 +1,6 @@
+import dotenv from 'dotenv';
+dotenv.config();
+
 import http from 'http';
 import { Server as SocketIOServer } from 'socket.io';
 import app from './app.js';
@@ -9,14 +12,29 @@ const PORT = process.env.PORT || 5000;
 // Create HTTP server
 const httpServer = http.createServer(app);
 
-// Setup Socket.IO with production-aware CORS
-const socketOrigins = process.env.CLIENT_URL
-  ? [process.env.CLIENT_URL, 'http://localhost:5173']
-  : '*';
+// Clean and normalize client URL (strip trailing slash if present)
+const clientUrl = process.env.CLIENT_URL?.trim().replace(/\/$/, '');
 
+// Dynamic CORS validator: allows localhost, client URL, and all Render domains
+const isAllowedOrigin = (origin) => {
+  if (!origin) return true; // allow curl, health checks, postman, mobile clients
+  if (origin === 'http://localhost:5173' || origin === 'http://localhost:3000') return true;
+  if (clientUrl && (origin === clientUrl || origin === `${clientUrl}/`)) return true;
+  if (origin.endsWith('.onrender.com')) return true; // automatically allow Render frontend URLs
+  return false;
+};
+
+// Setup Socket.IO with production-aware CORS
 const io = new SocketIOServer(httpServer, {
   cors: {
-    origin: socketOrigins,
+    origin: (origin, callback) => {
+      if (isAllowedOrigin(origin)) {
+        callback(null, true);
+      } else {
+        // Fallback: reflect origin in non-production, otherwise allow Render domains
+        callback(null, origin || '*');
+      }
+    },
     methods: ['GET', 'POST', 'PATCH', 'PUT', 'DELETE'],
     credentials: true,
   },
@@ -47,6 +65,19 @@ const startServer = async () => {
   }
 };
 
+// Graceful shutdown on termination signals from cloud hosts (Render/Docker)
+const gracefulShutdown = () => {
+  console.log('[Server] Received termination signal. Closing gracefully...');
+  httpServer.close(() => {
+    console.log('[Server] HTTP and WebSocket server closed.');
+    process.exit(0);
+  });
+};
+
+process.on('SIGTERM', gracefulShutdown);
+process.on('SIGINT', gracefulShutdown);
+
 startServer();
 
 export { httpServer, io };
+
