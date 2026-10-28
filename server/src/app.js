@@ -47,6 +47,16 @@ if (process.env.NODE_ENV !== 'test') {
   app.use(morgan('dev'));
 }
 
+// Root route — provides API welcome message and quick links
+app.get('/', (req, res) => {
+  res.status(200).json({
+    message: '🚀 SyncBoard API Server is running',
+    version: '1.0.0',
+    documentation: '/api-docs',
+    healthCheck: '/health',
+  });
+});
+
 // Health check endpoint
 app.get('/health', (req, res) => {
   res.status(200).json({
