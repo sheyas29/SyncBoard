@@ -1,28 +1,28 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
 import { Draggable } from '@hello-pangea/dnd';
-import { Clock } from 'lucide-react';
+import { Clock, ChevronsUp, ChevronUp, Minus, ChevronDown, AlertCircle } from 'lucide-react';
 
 const priorityBadges = {
   urgent: {
     label: 'Urgent',
-    classes: 'bg-[#fcd2df] text-[#8c2340] shadow-[0_3px_8px_-2px_rgba(252,210,223,0.7),inset_1px_1px_2px_rgba(255,255,255,0.8),inset_-1px_-1px_2px_rgba(180,60,90,0.15)]',
-    borderAccent: 'border-l-[5px] border-l-[#f05388]',
+    icon: ChevronsUp,
+    classes: 'bg-[#fef2f2] text-[#b91c1c] border border-[#fecaca] shadow-[0_2px_6px_-1px_rgba(239,68,68,0.15)]',
   },
   high: {
     label: 'High',
-    classes: 'bg-[#f9e7a8] text-[#6e5614] shadow-[0_3px_8px_-2px_rgba(249,231,168,0.7),inset_1px_1px_2px_rgba(255,255,255,0.8),inset_-1px_-1px_2px_rgba(180,150,60,0.15)]',
-    borderAccent: 'border-l-[5px] border-l-[#f59e0b]',
+    icon: ChevronUp,
+    classes: 'bg-[#fff7ed] text-[#c2410c] border border-[#fed7aa] shadow-[0_2px_6px_-1px_rgba(249,115,22,0.15)]',
   },
   medium: {
     label: 'Medium',
-    classes: 'bg-[#ded0f9] text-[#4b3378] shadow-[0_3px_8px_-2px_rgba(222,208,249,0.7),inset_1px_1px_2px_rgba(255,255,255,0.8),inset_-1px_-1px_2px_rgba(130,100,180,0.15)]',
-    borderAccent: 'border-l-[5px] border-l-[#8b5cf6]',
+    icon: Minus,
+    classes: 'bg-[#eff6ff] text-[#1d4ed8] border border-[#bfdbfe] shadow-[0_2px_6px_-1px_rgba(59,130,246,0.15)]',
   },
   low: {
     label: 'Low',
-    classes: 'bg-[#c0efdc] text-[#1c573c] shadow-[0_3px_8px_-2px_rgba(192,239,220,0.7),inset_1px_1px_2px_rgba(255,255,255,0.8),inset_-1px_-1px_2px_rgba(90,160,130,0.15)]',
-    borderAccent: 'border-l-[5px] border-l-[#10b981]',
+    icon: ChevronDown,
+    classes: 'bg-[#f8fafc] text-[#475569] border border-[#cbd5e1] shadow-[0_2px_6px_-1px_rgba(100,116,139,0.12)]',
   },
 };
 
@@ -35,7 +35,14 @@ export const CardItem = ({
   typingUsers,
 }) => {
   const priority = priorityBadges[card.priority] || priorityBadges.medium;
+  const PriorityIcon = priority.icon;
   const isTyping = typingUsers && typingUsers[card._id];
+
+  // Overdue check: card has a dueDate that passed, and is not already done
+  const isOverdue =
+    Boolean(card.dueDate) &&
+    new Date(card.dueDate).setHours(23, 59, 59, 999) < Date.now() &&
+    card.status !== 'done';
 
   return (
     <Draggable draggableId={card._id} index={index}>
@@ -52,7 +59,11 @@ export const CardItem = ({
             className={`group relative rounded-[20px] p-4 mb-3.5 transition-all duration-200 select-none ${
               snapshot.isDragging
                 ? 'clay-card-dragging rotate-2 scale-[1.02] z-50 pointer-events-auto shadow-[0_24px_45px_-8px_rgba(56,49,57,0.24)]'
-                : `bg-white border border-[#d8d3e5] ${priority.borderAccent} shadow-[0_4px_12px_-2px_rgba(56,49,57,0.08),0_2px_4px_-1px_rgba(56,49,57,0.04)] hover:shadow-[0_16px_32px_-6px_rgba(56,49,57,0.18),0_6px_14px_-2px_rgba(56,49,57,0.08)] hover:border-[#9683c3] hover:-translate-y-1.5`
+                : `bg-white border ${
+                    isOverdue
+                      ? 'border-[#e8d8de] border-l-[4px] border-l-[#e11d48]'
+                      : 'border-[#dcd8ea]'
+                  } shadow-[0_4px_12px_-2px_rgba(56,49,57,0.07),0_2px_4px_-1px_rgba(56,49,57,0.03)] hover:shadow-[0_16px_32px_-6px_rgba(56,49,57,0.16),0_6px_14px_-2px_rgba(56,49,57,0.08)] hover:border-[#9683c3] hover:-translate-y-1.5`
             }`}
             onClick={() => {
               if (!snapshot.isDragging) {
@@ -71,9 +82,10 @@ export const CardItem = ({
             {/* Top row: Priority & Quick Status Toggle */}
             <div className="flex items-center justify-between gap-2 mb-2">
               <span
-                className={`text-[11px] font-bold uppercase tracking-wider px-2.5 py-0.5 rounded-full ${priority.classes}`}
+                className={`inline-flex items-center gap-1 text-[11px] font-bold uppercase tracking-wider px-2 py-0.5 rounded-full ${priority.classes}`}
               >
-                {priority.label}
+                <PriorityIcon className="w-3 h-3 stroke-[2.5]" />
+                <span>{priority.label}</span>
               </span>
 
               {/* Status Shift Buttons (recessed mini pods) */}
@@ -127,12 +139,25 @@ export const CardItem = ({
             <div className="flex items-center justify-between text-[#48404b] pt-2.5 mt-2 border-t border-[#f0eef7] text-xs">
               <div className="flex items-center gap-1.5">
                 {card.dueDate ? (
-                  <span className="flex items-center gap-1 text-[11px] font-semibold text-[#6e5614] px-2 py-0.5 rounded-full bg-[#fcf8e3] shadow-[inset_1px_1px_2px_rgba(56,49,57,0.05),inset_-1px_-1px_2px_rgba(255,255,255,0.9)]">
-                    <Clock className="w-3 h-3 text-[#a88628]" />
-                    {new Date(card.dueDate).toLocaleDateString(undefined, {
-                      month: 'short',
-                      day: 'numeric',
-                    })}
+                  <span
+                    className={`flex items-center gap-1 text-[11px] font-semibold px-2 py-0.5 rounded-full ${
+                      isOverdue
+                        ? 'bg-[#fef2f2] text-[#b91c1c] border border-[#fecaca]'
+                        : 'bg-[#f8fafc] text-[#475569] border border-[#e2e8f0]'
+                    }`}
+                  >
+                    {isOverdue ? (
+                      <AlertCircle className="w-3 h-3 text-[#dc2626]" />
+                    ) : (
+                      <Clock className="w-3 h-3 text-[#64748b]" />
+                    )}
+                    <span>
+                      {new Date(card.dueDate).toLocaleDateString(undefined, {
+                        month: 'short',
+                        day: 'numeric',
+                      })}
+                      {isOverdue && ' (Overdue)'}
+                    </span>
                   </span>
                 ) : (
                   <span className="text-[11px] text-[#8e8a94] font-medium">

@@ -417,9 +417,9 @@ export const BoardDetailPage = () => {
                 >
                   <option value="all">All Priorities</option>
                   <option value="urgent">🔴 Urgent</option>
-                  <option value="high">🟡 High</option>
-                  <option value="medium">🟣 Medium</option>
-                  <option value="low">🟢 Low</option>
+                  <option value="high">🟠 High</option>
+                  <option value="medium">🔵 Medium</option>
+                  <option value="low">⚪ Low</option>
                 </select>
                 <Filter className="w-3 h-3 text-[#8e8a94] absolute right-2.5 top-1/2 -translate-y-1/2 pointer-events-none" />
               </div>
