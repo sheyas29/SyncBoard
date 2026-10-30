@@ -1,6 +1,7 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Link, useNavigate, useLocation } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext.jsx';
+import api from '../api/client.js';
 import { KanbanSquare, ArrowRight, AlertCircle, Sparkles, CheckCircle2, ShieldCheck, Zap } from 'lucide-react';
 
 export const LoginPage = () => {
@@ -14,6 +15,11 @@ export const LoginPage = () => {
   const location = useLocation();
 
   const isExpired = new URLSearchParams(location.search).get('expired');
+
+  // Ping backend on mount to trigger Render cold-start wake-up immediately
+  useEffect(() => {
+    api.get('/health').catch(() => {});
+  }, []);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -29,9 +35,15 @@ export const LoginPage = () => {
       await login(email, password);
       navigate('/dashboard');
     } catch (err) {
-      setError(
-        err.response?.data?.message || err.message || 'Invalid email or password'
-      );
+      if (err.code === 'ECONNABORTED' || !err.response || err.response?.status >= 500) {
+        setError(
+          'Backend is warming up on Render (free tier cold start). Please wait a moment and try again.'
+        );
+      } else {
+        setError(
+          err.response?.data?.message || err.message || 'Invalid email or password'
+        );
+      }
     } finally {
       setLoading(false);
     }
@@ -47,13 +59,49 @@ export const LoginPage = () => {
     try {
       await login(demoEmail, demoPassword);
       navigate('/dashboard');
-    } catch {
-      try {
-        await register(demoName, demoEmail, demoPassword);
-        navigate('/dashboard');
-      } catch (regErr) {
-        setError(regErr.response?.data?.message || 'Failed to auto-provision demo user');
+    } catch (loginErr) {
+      // 1. If it was a network error, timeout, or 5xx (Render spinning up), do NOT attempt register
+      const isNetworkOrColdStart =
+        loginErr.code === 'ECONNABORTED' ||
+        !loginErr.response ||
+        loginErr.response?.status >= 500;
+
+      if (isNetworkOrColdStart) {
+        setError(
+          'Backend is warming up on Render (cold start takes ~30-50s). Please wait a few moments and click again.'
+        );
+        return;
       }
+
+      // 2. Only if the server responded with 401 (e.g. fresh database where demo accounts don't exist yet)
+      if (loginErr.response?.status === 401) {
+        try {
+          await register(demoName, demoEmail, demoPassword);
+          navigate('/dashboard');
+          return;
+        } catch (regErr) {
+          // If register returns 400 that the account already exists, the user exists in DB.
+          // Retry login once as the account is present, instead of showing confusing "already exists"
+          if (
+            regErr.response?.status === 400 &&
+            (regErr.response?.data?.message?.includes('already exists') ||
+             regErr.response?.data?.message?.toLowerCase().includes('exists'))
+          ) {
+            try {
+              await login(demoEmail, demoPassword);
+              navigate('/dashboard');
+              return;
+            } catch {
+              setError('Failed to authenticate demo user. Please try clicking again.');
+              return;
+            }
+          }
+          setError(regErr.response?.data?.message || 'Failed to authenticate demo user');
+          return;
+        }
+      }
+
+      setError(loginErr.response?.data?.message || 'Invalid email or password');
     } finally {
       setLoading(false);
     }
