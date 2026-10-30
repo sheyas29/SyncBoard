@@ -7,18 +7,22 @@ const priorityBadges = {
   urgent: {
     label: 'Urgent',
     classes: 'bg-[#fcd2df] text-[#8c2340] shadow-[0_3px_8px_-2px_rgba(252,210,223,0.7),inset_1px_1px_2px_rgba(255,255,255,0.8),inset_-1px_-1px_2px_rgba(180,60,90,0.15)]',
+    borderAccent: 'border-l-[5px] border-l-[#f05388]',
   },
   high: {
     label: 'High',
     classes: 'bg-[#f9e7a8] text-[#6e5614] shadow-[0_3px_8px_-2px_rgba(249,231,168,0.7),inset_1px_1px_2px_rgba(255,255,255,0.8),inset_-1px_-1px_2px_rgba(180,150,60,0.15)]',
+    borderAccent: 'border-l-[5px] border-l-[#f59e0b]',
   },
   medium: {
     label: 'Medium',
     classes: 'bg-[#ded0f9] text-[#4b3378] shadow-[0_3px_8px_-2px_rgba(222,208,249,0.7),inset_1px_1px_2px_rgba(255,255,255,0.8),inset_-1px_-1px_2px_rgba(130,100,180,0.15)]',
+    borderAccent: 'border-l-[5px] border-l-[#8b5cf6]',
   },
   low: {
     label: 'Low',
     classes: 'bg-[#c0efdc] text-[#1c573c] shadow-[0_3px_8px_-2px_rgba(192,239,220,0.7),inset_1px_1px_2px_rgba(255,255,255,0.8),inset_-1px_-1px_2px_rgba(90,160,130,0.15)]',
+    borderAccent: 'border-l-[5px] border-l-[#10b981]',
   },
 };
 
@@ -43,12 +47,12 @@ export const CardItem = ({
             {...provided.dragHandleProps}
             style={{
               ...provided.draggableProps.style,
-              cursor: snapshot.isDragging ? 'grabbing' : 'grab',
+              cursor: snapshot.isDragging ? 'grabbing' : 'pointer',
             }}
-            className={`group relative rounded-[22px] p-4 mb-3.5 transition-all select-none ${
+            className={`group relative rounded-[20px] p-4 mb-3.5 transition-all duration-200 select-none ${
               snapshot.isDragging
-                ? 'clay-card-dragging rotate-1 z-50 pointer-events-auto'
-                : 'bg-[#fffdf7] border border-white/90 shadow-[0_8px_20px_-6px_rgba(56,49,57,0.08),inset_2px_2px_4px_rgba(255,255,255,0.95),inset_-2px_-2px_5px_rgba(56,49,57,0.04)] hover:shadow-[0_12px_24px_-6px_rgba(56,49,57,0.12),inset_2px_2px_4px_rgba(255,255,255,0.95),inset_-2px_-2px_5px_rgba(56,49,57,0.04)] hover:-translate-y-0.5'
+                ? 'clay-card-dragging rotate-2 scale-[1.02] z-50 pointer-events-auto shadow-[0_24px_45px_-8px_rgba(56,49,57,0.24)]'
+                : `bg-white border border-[#d8d3e5] ${priority.borderAccent} shadow-[0_4px_12px_-2px_rgba(56,49,57,0.08),0_2px_4px_-1px_rgba(56,49,57,0.04)] hover:shadow-[0_16px_32px_-6px_rgba(56,49,57,0.18),0_6px_14px_-2px_rgba(56,49,57,0.08)] hover:border-[#9683c3] hover:-translate-y-1.5`
             }`}
             onClick={() => {
               if (!snapshot.isDragging) {
@@ -150,7 +154,7 @@ export const CardItem = ({
                   }
                   alt={card.assignee.name}
                   title={`Assigned to ${card.assignee.name}`}
-                  className="w-6 h-6 rounded-full ring-2 ring-[#fffdf7] shadow-[0_2px_6px_-1px_rgba(56,49,57,0.15)] object-cover"
+                  className="w-6 h-6 rounded-full ring-2 ring-white shadow-[0_2px_6px_-1px_rgba(56,49,57,0.15)] object-cover"
                 />
               ) : (
                 <span className="text-[11px] text-[#8e8a94] italic font-medium">Unassigned</span>
