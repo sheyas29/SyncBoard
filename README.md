@@ -29,6 +29,9 @@
 | **Zero-Refresh Synchronization** | Multiple concurrent browser sessions (e.g., normal window + incognito) viewing the same board sync instantly without refreshing. | ✅ Complete |
 | **Persistence & Database Indexes** | MongoDB with compound indexes (`boardId`, `status`, `order`, `assignee`). Changes survive page reloads and server restarts. | ✅ Complete |
 | **Connection & UI States** | Responsive UI with live connection status pill (`Connected (Live Sync)` / `Connecting...` / `Offline`), loading skeletons, and empty states. | ✅ Complete |
+| **Accessibility & WCAG AA** | High-contrast palette (≥ 4.5:1 for normal text), ≥ 12px meaningful labels, full keyboard reachability (`:focus-visible`, <kbd>Enter</kbd>/<kbd>Space</kbd>/<kbd>Esc</kbd>), and `prefers-reduced-motion`. | ✅ Complete |
+| **UX & Single Scroll Strategy** | Flattened 2-layer columns, pinned sticky headers, single per-column vertical scroll (no double scrollbars), subtle scrollbars, and quieted "Done" card states. | ✅ Complete |
+| **Live Presence & Typing** | Active collaborator avatar cluster with green status dots & `+N` overflow for 2+ users, alongside real-time card editing typing badges. | ✅ Complete |
 | **Zero-Config Reviewer Setup** | Seamless fallback to `mongodb-memory-server` if local MongoDB is not running, allowing 1-click execution without external dependencies. | ✅ Complete |
 | **Automated Testing Suite** | Comprehensive Jest + Supertest integration test suite covering auth, duplicate prevention, unauthorized access rejection, and card movement. | ✅ Complete |
 
@@ -182,6 +185,37 @@ npm run test:server
 
 ---
 
+## ♿ Accessibility, UX & Design Architecture
+
+### 1. WCAG AA Contrast Compliance & Typography
+- **Contrast Ratios (≥ 4.5:1)**: Color pairings across all pastel backgrounds, priority pills, and due-date chips are calibrated for high contrast:
+  - **Urgent**: `#991b1b` on `#fef2f2` (**7.5:1**)
+  - **High**: `#9a3412` on `#fff7ed` (**6.6:1**)
+  - **Medium**: `#1e40af` on `#eff6ff` (**7.6:1**)
+  - **Low**: `#334155` on `#f8fafc` (**7.2:1**)
+  - **Done**: `#52525b` on `#f4f4f5` (**6.2:1**)
+  - **Muted Labels & Placeholders**: Replaced low-contrast grays with `#58515f` (**> 6.5:1** on `#fffdf7` / `#f1f2fa`).
+- **Minimum 12px Font Size**: All meaningful labels, priority pills, date chips, and timestamps enforce a minimum font size of `12px` (`text-xs`).
+
+### 2. Full Keyboard Navigation & ARIA Semantics
+- **Card Interaction**: Task cards include `role="button"`, `tabIndex={0}`, descriptive `aria-label` attributes, and open via <kbd>Enter</kbd> or <kbd>Space</kbd>.
+- **Keyboard-Visible Actions**: Quick status transition buttons reveal via `focus-within:opacity-100` so keyboard users can shift columns without hover.
+- **Modal Dialogs**: Modals implement `role="dialog"`, `aria-modal="true"`, `aria-labelledby`, and dismiss instantly on <kbd>Escape</kbd>.
+- **Focus Indicators**: Universal `:focus-visible` styling (`outline: 2px solid #8264b4`) provides distinct visual feedback during tab navigation.
+- **Reduced Motion**: Respects `@media (prefers-reduced-motion: reduce)` by disabling non-essential transitions, smooth scrolling, and decorative spin/ping animations.
+
+### 3. Layout Streamlining & Single-Scroll Architecture
+- **2-Layer Flattened Columns**: Removed extraneous inner trays, allowing cards ~20% more horizontal space while keeping a clean background separation.
+- **Pinned Column Headers**: Column titles, task counters, and column `+` buttons remain sticky at the top during scrolling.
+- **Zero Double Scrollbars**: The viewport is locked with a single per-column vertical scroll (`.column-card-scroll`) and subtle custom scrollbars.
+- **Quieted "Done" Tasks**: Completed cards adopt a subtle `opacity-70`, strikethrough typography, a checkmark icon, and a neutral priority pill to reduce clutter.
+- **Smart Relative Dates**: Displays context-aware due dates (`Overdue · <date>`, `Today`, `Tomorrow`, `Later`, `Done`) evaluated in local calendar time.
+
+### 4. Real-Time Collaborator Presence
+- **Online Collaborators Badge**: When 2 or more users view the same board concurrently, an avatar cluster appears in the navbar next to the Live Sync pill with individual green online dots, name tooltips, and a `+N` overflow indicator.
+
+---
+
 ## 🔒 Security & Data Integrity Highlights
 
 1. **Server-Side Authorization**: Hiding UI controls is not relied upon. Every board endpoint performs an explicit server-side lookup verifying whether `req.user._id` matches the board `owner` or is present in `board.members`. Unauthorized calls strictly return `403 Forbidden`.
@@ -215,6 +249,48 @@ This application is deployed and hosted on Render:
 - **Environment Variables:**
   - `VITE_API_URL`: `https://syncboard-api-zawe.onrender.com/api`
   - `VITE_SOCKET_URL`: `https://syncboard-api-zawe.onrender.com`
+
+---
+
+## 📈 Production Roadmap, Shortcomings & Global Scale Architecture
+
+While SyncBoard delivers a production-grade, highly responsive MVP with live WebSockets, secure authorization, and accessible UI, scaling the platform to support **millions of concurrent global users and massive enterprise datasets** requires addressing several architectural evolution points:
+
+### 1. Real-Time Horizontal Scaling & Distributed Presence
+- **Current MVP Boundary**: Socket.IO runs within a single Node.js process. Board rooms and active presence Maps (`activeUsersPerBoard`) are stored in server process memory.
+- **Enterprise Upgrade**:
+  - **Redis Pub/Sub Cluster Adapter (`@socket.io/redis-adapter`)**: Distribute WebSocket broadcast events across multiple stateless Node.js container instances behind a Layer 7 Application Load Balancer (ALB).
+  - **Distributed Ephemeral Presence**: Move active collaborator tracking from in-memory Maps to **Redis Hashsets with sliding-window TTL heartbeats (`EXPIRE 30s`)**, ensuring zero split-brain presence states during autoscaling pod teardowns or deployments.
+  - **Edge-Terminated WebSockets**: Transition to managed edge WebSocket services (e.g. Cloudflare Durable Objects, AWS API Gateway WebSocket, or Ably) to terminate SSL connections within 10–20ms of the user globally.
+
+### 2. Massive Data Handling & High-Throughput Card Ordering ($O(1)$ Lexorank)
+- **Current MVP Boundary**: Card sorting uses sequential integer ordering (`order: 0, 1, 2...`). Moving a card to the top of a column with 1,000 cards triggers an $O(N)$ bulk database write update across all subsequent cards.
+- **Enterprise Upgrade**:
+  - **Fractional Indexing (Lexorank)**: Adopt lexicographical string-based midpoint ranking (similar to JIRA/Linear). Dragging a card between keys `"a0"` and `"a1"` assigns `"a0V"`, converting all card movements into strictly atomic **$O(1)$ single-document mutations** with zero write amplification.
+  - **Virtualized Infinite Scrolling**: Columns with tens of thousands of cards currently render all DOM elements. Upgrading to `@tanstack/react-virtual` paired with cursor-based column pagination (`limit=50`, `after_id`) ensures only the visible card viewport is kept in memory.
+  - **MongoDB Database Sharding**: Shard the `cards` and `activities` collections using hashed `boardId` keys across an Atlas Sharded Cluster, isolating read/write workloads per workspace.
+  - **Read/Write Splitting & Analytical Offloading**: Direct write transactions to primary MongoDB replica nodes while routing search queries, activity audit trails, and dashboard overviews to geographically distributed secondary read replicas.
+
+### 3. Concurrent Conflict Resolution & Collaborative Rich Text (CRDTs)
+- **Current MVP Boundary**: Last-Write-Wins (LWW) REST update semantics. If two collaborators simultaneously edit a card title or description, the latter payload overwrites the former.
+- **Enterprise Upgrade**:
+  - **Conflict-free Replicated Data Types (CRDTs)**: Integrate **Yjs** or **Automerge** over WebSocket rooms for true simultaneous character-by-character collaborative editing inside card descriptions and comments.
+  - **Offline-First Mutation Queue**: Store pending client mutations inside browser **IndexedDB** using Service Workers. On network disconnection, actions queue optimistically and reconcile seamlessly with exponential backoff on reconnection.
+
+### 4. Global Multi-Region Latency & Edge Acceleration
+- **Current MVP Boundary**: Hosted in a single cloud region (Render Oregon/Frankfurt). Cross-continental users encounter higher round-trip latency (RTT).
+- **Enterprise Upgrade**:
+  - **Anycast Global CDN**: Route static assets and API requests through Cloudflare / Fastly Anycast edge PoPs with HTTP/3 and Brotli compression.
+  - **Geographic Data Locality**: Implement multi-region backend clusters with regional read caching (e.g. AWS Global Accelerator or Cloudflare Workers Edge API caching for public/read-only board endpoints using `stale-while-revalidate`).
+
+### 5. Enterprise Security, Governance & Observability
+- **Current MVP Boundary**: JWT tokens stored in `localStorage`; standard Node.js `console.log` output; board-level role checks.
+- **Enterprise Upgrade**:
+  - **Hardened Cookie Authentication**: Store authentication tokens in `HttpOnly`, `Secure`, `SameSite=Strict` cookies with refresh token rotation and short-lived (15-minute) access tokens to eliminate XSS token exfiltration vectors.
+  - **Distributed Rate Limiting**: Deploy Redis token-bucket rate limiters (`rate-limiter-flexible`) across REST API routes and socket handshake attempts to prevent brute-force attacks and DoS spikes.
+  - **Granular Enterprise RBAC & Organizations**: Introduce an Organization tenant hierarchy with customizable permission matrices (Owner, Admin, Editor, Commenter, Viewer, Guest).
+  - **Distributed Tracing & Telemetry**: Instrument the full stack with **OpenTelemetry**, exporting metrics and traces to Prometheus/Grafana or Datadog, propagating correlation IDs (`x-request-id`) from the React client through Express middleware down to database query spans.
+  - **Audit Log Archival**: Stream board activity logs to cold storage (e.g. AWS S3 Parquet / BigQuery) for regulatory retention and compliance analytics without ballooning operational database size.
 
 ---
 
