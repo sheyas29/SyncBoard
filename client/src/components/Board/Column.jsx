@@ -73,6 +73,7 @@ export const Column = ({
             onClick={() => onAddCardClick(columnId)}
             className="w-8 h-8 rounded-full bg-white/80 hover:bg-white text-[#383139] shadow-[0_3px_8px_-2px_rgba(56,49,57,0.1),inset_1.5px_1.5px_3px_rgba(255,255,255,0.95),inset_-1.5px_-1.5px_3px_rgba(56,49,57,0.06)] active:scale-95 transition-all flex items-center justify-center"
             title={`Add card to ${title}`}
+            aria-label={`Add card to ${title}`}
           >
             <Plus className="w-4 h-4 stroke-[2.5]" />
           </button>
