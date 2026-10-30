@@ -1,7 +1,15 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
 import { Draggable } from '@hello-pangea/dnd';
-import { Clock, ChevronsUp, ChevronUp, Minus, ChevronDown, AlertCircle } from 'lucide-react';
+import {
+  Clock,
+  ChevronsUp,
+  ChevronUp,
+  Minus,
+  ChevronDown,
+  AlertCircle,
+  CheckCircle2,
+} from 'lucide-react';
 
 const priorityBadges = {
   urgent: {
@@ -26,6 +34,74 @@ const priorityBadges = {
   },
 };
 
+/**
+ * Display helper for due dates.
+ * Computes calendar-date diffs safely in local time.
+ * Returns { label, classes, isOverdue }
+ */
+const getDueDateDisplay = (dueDateStr, isDone) => {
+  if (!dueDateStr) return null;
+
+  const dueDate = new Date(dueDateStr);
+  if (isNaN(dueDate.getTime())) return null;
+
+  const formattedDate = dueDate.toLocaleDateString(undefined, {
+    day: 'numeric',
+    month: 'short',
+  });
+
+  // Done column: neutral/muted, no urgency styling
+  if (isDone) {
+    return {
+      label: formattedDate,
+      classes: 'bg-[#f4f4f5] text-[#71717a] border border-[#e4e4e7]',
+      isOverdue: false,
+    };
+  }
+
+  // Compare local calendar dates (normalized to local midnight)
+  const now = new Date();
+  const todayMidnight = new Date(now.getFullYear(), now.getMonth(), now.getDate());
+  const targetMidnight = new Date(dueDate.getFullYear(), dueDate.getMonth(), dueDate.getDate());
+
+  const diffTime = targetMidnight.getTime() - todayMidnight.getTime();
+  const diffDays = Math.round(diffTime / (1000 * 60 * 60 * 24));
+
+  if (diffDays < 0) {
+    // Overdue (not done)
+    return {
+      label: `Overdue · ${formattedDate}`,
+      classes: 'bg-[#fef2f2] text-[#b91c1c] border border-[#fecaca] shadow-[0_1px_3px_rgba(239,68,68,0.1)]',
+      isOverdue: true,
+    };
+  }
+
+  if (diffDays === 0) {
+    // Today: amber
+    return {
+      label: 'Today',
+      classes: 'bg-[#fffbeb] text-[#b45309] border border-[#fde68a]',
+      isOverdue: false,
+    };
+  }
+
+  if (diffDays === 1) {
+    // Tomorrow: amber
+    return {
+      label: 'Tomorrow',
+      classes: 'bg-[#fffbeb] text-[#b45309] border border-[#fde68a]',
+      isOverdue: false,
+    };
+  }
+
+  // Later: neutral with formatted date
+  return {
+    label: formattedDate,
+    classes: 'bg-[#f8fafc] text-[#475569] border border-[#e2e8f0]',
+    isOverdue: false,
+  };
+};
+
 export const CardItem = ({
   card,
   index,
@@ -34,15 +110,13 @@ export const CardItem = ({
   onDeleteCard,
   typingUsers,
 }) => {
+  const isDone = card.status === 'done';
   const priority = priorityBadges[card.priority] || priorityBadges.medium;
   const PriorityIcon = priority.icon;
   const isTyping = typingUsers && typingUsers[card._id];
 
-  // Overdue check: card has a dueDate that passed, and is not already done
-  const isOverdue =
-    Boolean(card.dueDate) &&
-    new Date(card.dueDate).setHours(23, 59, 59, 999) < Date.now() &&
-    card.status !== 'done';
+  const dueInfo = getDueDateDisplay(card.dueDate, isDone);
+  const isOverdue = Boolean(dueInfo?.isOverdue);
 
   return (
     <Draggable draggableId={card._id} index={index}>
@@ -59,7 +133,7 @@ export const CardItem = ({
             className={`group relative rounded-[20px] p-4 mb-3.5 transition-all duration-200 select-none ${
               snapshot.isDragging
                 ? 'clay-card-dragging rotate-2 scale-[1.02] z-50 pointer-events-auto shadow-[0_24px_45px_-8px_rgba(56,49,57,0.24)]'
-                : `bg-white border ${
+                : `${isDone ? 'opacity-70 hover:opacity-100 bg-[#faf9fc]' : 'bg-white'} border ${
                     isOverdue
                       ? 'border-[#e8d8de] border-l-[4px] border-l-[#e11d48]'
                       : 'border-[#dcd8ea]'
@@ -82,7 +156,11 @@ export const CardItem = ({
             {/* Top row: Priority & Quick Status Toggle */}
             <div className="flex items-center justify-between gap-2 mb-2">
               <span
-                className={`inline-flex items-center gap-1 text-[11px] font-bold uppercase tracking-wider px-2 py-0.5 rounded-full ${priority.classes}`}
+                className={`inline-flex items-center gap-1 text-[11px] font-bold uppercase tracking-wider px-2 py-0.5 rounded-full ${
+                  isDone
+                    ? 'bg-[#f1f2f6] text-[#71717a] border border-[#e4e4e7]'
+                    : priority.classes
+                }`}
               >
                 <PriorityIcon className="w-3 h-3 stroke-[2.5]" />
                 <span>{priority.label}</span>
@@ -123,14 +201,27 @@ export const CardItem = ({
               </div>
             </div>
 
-            {/* Card Title */}
-            <h4 className="text-sm font-bold text-[#383139] leading-snug line-clamp-2 mb-1">
-              {card.title}
-            </h4>
+            {/* Card Title (Strikethrough & small check icon when Done) */}
+            <div className="flex items-start gap-1.5 mb-1">
+              {isDone && (
+                <CheckCircle2 className="w-4 h-4 text-emerald-600 shrink-0 mt-0.5 stroke-[2.5]" />
+              )}
+              <h4
+                className={`text-sm font-bold leading-snug line-clamp-2 ${
+                  isDone ? 'line-through text-[#71717a]' : 'text-[#383139]'
+                }`}
+              >
+                {card.title}
+              </h4>
+            </div>
 
             {/* Card Description */}
             {card.description && (
-              <p className="text-xs text-[#48404b] line-clamp-2 mb-3 leading-relaxed">
+              <p
+                className={`text-xs line-clamp-2 mb-3 leading-relaxed ${
+                  isDone ? 'text-[#8e8a94]' : 'text-[#48404b]'
+                }`}
+              >
                 {card.description}
               </p>
             )}
@@ -138,26 +229,18 @@ export const CardItem = ({
             {/* Footer: Date & Assignee */}
             <div className="flex items-center justify-between text-[#48404b] pt-2.5 mt-2 border-t border-[#f0eef7] text-xs">
               <div className="flex items-center gap-1.5">
-                {card.dueDate ? (
+                {dueInfo ? (
                   <span
-                    className={`flex items-center gap-1 text-[11px] font-semibold px-2 py-0.5 rounded-full ${
-                      isOverdue
-                        ? 'bg-[#fef2f2] text-[#b91c1c] border border-[#fecaca]'
-                        : 'bg-[#f8fafc] text-[#475569] border border-[#e2e8f0]'
-                    }`}
+                    className={`flex items-center gap-1 text-[11px] font-semibold px-2 py-0.5 rounded-full ${dueInfo.classes}`}
                   >
-                    {isOverdue ? (
-                      <AlertCircle className="w-3 h-3 text-[#dc2626]" />
+                    {dueInfo.isOverdue ? (
+                      <AlertCircle className="w-3 h-3 text-[#dc2626] shrink-0" />
+                    ) : isDone ? (
+                      <CheckCircle2 className="w-3 h-3 text-[#71717a] shrink-0" />
                     ) : (
-                      <Clock className="w-3 h-3 text-[#64748b]" />
+                      <Clock className="w-3 h-3 shrink-0" />
                     )}
-                    <span>
-                      {new Date(card.dueDate).toLocaleDateString(undefined, {
-                        month: 'short',
-                        day: 'numeric',
-                      })}
-                      {isOverdue && ' (Overdue)'}
-                    </span>
+                    <span>{dueInfo.label}</span>
                   </span>
                 ) : (
                   <span className="text-[11px] text-[#8e8a94] font-medium">
