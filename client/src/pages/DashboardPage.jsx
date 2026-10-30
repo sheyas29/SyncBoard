@@ -161,14 +161,16 @@ export const DashboardPage = () => {
               </p>
               <Link
                 to={`/board/${inviteNotification.boardId}`}
-                className="inline-block mt-2 px-3.5 py-1 rounded-full bg-[#ded0f9] text-[#4b3378] text-[11px] font-bold shadow-sm hover:bg-[#d4c2f6] transition-colors"
+                className="inline-block mt-2 px-3.5 py-1 rounded-full bg-[#ded0f9] text-[#4b3378] text-xs font-bold shadow-sm hover:bg-[#d4c2f6] transition-colors"
               >
                 Open Workspace →
               </Link>
             </div>
             <button
               onClick={() => setInviteNotification(null)}
-              className="text-[#8e8a94] hover:text-[#383139] text-xs font-bold p-1"
+              className="text-[#58515f] hover:text-[#383139] text-xs font-bold p-1"
+              title="Dismiss notification"
+              aria-label="Dismiss notification"
             >
               ✕
             </button>
@@ -200,6 +202,7 @@ export const DashboardPage = () => {
             <button
               onClick={() => setIsCreateModalOpen(true)}
               className="px-6 py-3.5 rounded-full clay-btn-pill clay-btn-cream text-sm font-bold shadow-[0_8px_20px_-4px_rgba(56,49,57,0.12)] shrink-0 self-start md:self-auto"
+              aria-label="Create new board"
             >
               <Plus className="w-4 h-4 stroke-[2.5]" />
               <span>Create Board</span>
@@ -209,13 +212,14 @@ export const DashboardPage = () => {
 
         {/* Search Bar - Recessed Inset Well */}
         <div className="relative max-w-md mb-8">
-          <Search className="w-4 h-4 text-[#8e8a94] absolute left-4 top-1/2 -translate-y-1/2" />
+          <Search className="w-4 h-4 text-[#58515f] absolute left-4 top-1/2 -translate-y-1/2" />
           <input
             type="text"
             value={search}
             onChange={(e) => setSearch(e.target.value)}
             placeholder="Search workspaces..."
-            className="w-full pl-11 pr-4 py-3 rounded-2xl clay-inset-well text-sm font-semibold placeholder:text-[#8e8a94]"
+            aria-label="Search workspaces"
+            className="w-full pl-11 pr-4 py-3 rounded-2xl clay-inset-well text-sm font-semibold placeholder:text-[#58515f]"
           />
         </div>
 
@@ -273,8 +277,9 @@ export const DashboardPage = () => {
                     </h3>
                     <button
                       onClick={(e) => handleDeleteBoard(e, board._id, board.title)}
-                      className="p-2 rounded-full text-[#8e8a94] hover:text-[#c9345e] hover:bg-[#fcd2df] opacity-0 group-hover:opacity-100 transition-all active:scale-90"
-                      title="Delete board"
+                      className="p-2 rounded-full text-[#58515f] hover:text-[#991b1b] hover:bg-[#fcd2df] opacity-0 group-hover:opacity-100 group-focus-within:opacity-100 focus:opacity-100 transition-all active:scale-90"
+                      title={`Delete board ${board.title}`}
+                      aria-label={`Delete board "${board.title}"`}
                     >
                       <Trash2 className="w-4 h-4" />
                     </button>
@@ -300,8 +305,8 @@ export const DashboardPage = () => {
                     </span>
                   </div>
 
-                  <span className="flex items-center gap-1 text-[#c74c83] group-hover:translate-x-1 transition-transform">
-                    Open <ExternalLink className="w-3 h-3" />
+                  <span className="flex items-center gap-1 text-[#a83363] group-hover:translate-x-1 transition-transform">
+                    Open <ExternalLink className="w-3.5 h-3.5" />
                   </span>
                 </div>
               </Link>
@@ -312,9 +317,17 @@ export const DashboardPage = () => {
 
       {/* Create Board Modal - Soft Cream Molded Tray */}
       {isCreateModalOpen && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-[#383139]/40 backdrop-blur-sm animate-in fade-in duration-180">
+        <div
+          role="dialog"
+          aria-modal="true"
+          aria-labelledby="create-board-modal-title"
+          className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-[#383139]/40 backdrop-blur-sm animate-in fade-in duration-180"
+          onKeyDown={(e) => {
+            if (e.key === 'Escape') setIsCreateModalOpen(false);
+          }}
+        >
           <div className="bg-[#fffdf7] border border-white rounded-[38px] w-full max-w-md shadow-[0_24px_60px_-15px_rgba(56,49,57,0.2),inset_3px_3px_6px_rgba(255,255,255,0.95),inset_-3px_-3px_8px_rgba(56,49,57,0.05)] p-7">
-            <h3 className="text-xl font-bold text-[#383139] mb-4 flex items-center gap-2.5">
+            <h3 id="create-board-modal-title" className="text-xl font-bold text-[#383139] mb-4 flex items-center gap-2.5">
               <div className="w-8 h-8 rounded-full bg-[#f6a3ca] shadow-[0_4px_10px_-2px_rgba(246,163,202,0.6),inset_1.5px_1.5px_2px_rgba(255,255,255,0.8)] flex items-center justify-center text-[#383139]">
                 <Plus className="w-4 h-4 stroke-[2.5]" />
               </div>
@@ -338,7 +351,7 @@ export const DashboardPage = () => {
                   value={newTitle}
                   onChange={(e) => setNewTitle(e.target.value)}
                   placeholder="e.g. Q4 Sprint & Feature Tracker"
-                  className="w-full px-4 py-3 rounded-2xl clay-inset-well text-sm font-semibold placeholder:text-[#8e8a94]"
+                  className="w-full px-4 py-3 rounded-2xl clay-inset-well text-sm font-semibold placeholder:text-[#58515f]"
                   autoFocus
                   required
                 />
@@ -353,7 +366,7 @@ export const DashboardPage = () => {
                   value={newDescription}
                   onChange={(e) => setNewDescription(e.target.value)}
                   placeholder="Outline purpose or goals..."
-                  className="w-full px-4 py-3 rounded-2xl clay-inset-well text-sm font-medium resize-none placeholder:text-[#8e8a94]"
+                  className="w-full px-4 py-3 rounded-2xl clay-inset-well text-sm font-medium resize-none placeholder:text-[#58515f]"
                 />
               </div>
 

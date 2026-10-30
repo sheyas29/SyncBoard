@@ -332,14 +332,14 @@ export const BoardDetailPage = () => {
               </p>
               <Link
                 to={`/board/${inviteNotification.boardId}`}
-                className="inline-block mt-2 px-3.5 py-1 rounded-full bg-[#ded0f9] text-[#4b3378] text-[11px] font-bold shadow-sm hover:bg-[#d4c2f6] transition-colors"
+                className="inline-block mt-2 px-3.5 py-1 rounded-full bg-[#ded0f9] text-[#4b3378] text-xs font-bold shadow-sm hover:bg-[#d4c2f6] transition-colors"
               >
                 Open Workspace →
               </Link>
             </div>
             <button
               onClick={() => setInviteNotification(null)}
-              className="text-[#8e8a94] hover:text-[#383139] text-xs font-bold p-1"
+              className="text-[#58515f] hover:text-[#383139] text-xs font-bold p-1"
               title="Dismiss notification"
               aria-label="Dismiss notification"
             >
@@ -375,13 +375,13 @@ export const BoardDetailPage = () => {
                   <h1 className="text-lg sm:text-xl font-extrabold text-[#383139] tracking-tight">
                     {board?.title}
                   </h1>
-                  <span className="text-[11px] font-bold px-2 py-0.5 rounded-full bg-[#edeaf7] text-[#48404b] shadow-[inset_1px_1px_2px_rgba(56,49,57,0.06)]">
+                  <span className="text-xs font-bold px-2.5 py-0.5 rounded-full bg-[#edeaf7] text-[#383139] shadow-[inset_1px_1px_2px_rgba(56,49,57,0.06)]">
                     {filteredCards.length} {filteredCards.length === 1 ? 'task' : 'tasks'}
                     {filteredCards.length !== cards.length && ` (of ${cards.length})`}
                   </span>
                 </div>
                 {board?.description && (
-                  <p className="text-xs font-medium text-[#6e6878] truncate max-w-md sm:max-w-xl">
+                  <p className="text-xs font-medium text-[#524b59] truncate max-w-md sm:max-w-xl">
                     {board.description}
                   </p>
                 )}
@@ -392,19 +392,19 @@ export const BoardDetailPage = () => {
             <div className="flex flex-wrap items-center gap-2 self-end md:self-auto">
               {/* Search input */}
               <div className="relative w-40 sm:w-48">
-                <Search className="w-3.5 h-3.5 text-[#8e8a94] absolute left-3 top-1/2 -translate-y-1/2 pointer-events-none" />
+                <Search className="w-3.5 h-3.5 text-[#58515f] absolute left-3 top-1/2 -translate-y-1/2 pointer-events-none" />
                 <input
                   type="text"
                   value={searchQuery}
                   onChange={(e) => setSearchQuery(e.target.value)}
                   placeholder="Search cards..."
-                  className="w-full pl-8 pr-7 py-1.5 rounded-full clay-inset-well text-xs font-semibold placeholder:text-[#8e8a94] transition-all"
+                  className="w-full pl-8 pr-7 py-1.5 rounded-full clay-inset-well text-xs font-semibold placeholder:text-[#58515f] transition-all"
                   aria-label="Search cards"
                 />
                 {searchQuery && (
                   <button
                     onClick={() => setSearchQuery('')}
-                    className="absolute right-2.5 top-1/2 -translate-y-1/2 text-[#8e8a94] hover:text-[#383139] text-xs font-bold"
+                    className="absolute right-2.5 top-1/2 -translate-y-1/2 text-[#58515f] hover:text-[#383139] text-xs font-bold"
                     title="Clear search"
                     aria-label="Clear search"
                   >
@@ -428,7 +428,7 @@ export const BoardDetailPage = () => {
                   <option value="medium">🔵 Medium</option>
                   <option value="low">⚪ Low</option>
                 </select>
-                <Filter className="w-3 h-3 text-[#8e8a94] absolute right-2.5 top-1/2 -translate-y-1/2 pointer-events-none" />
+                <Filter className="w-3 h-3 text-[#58515f] absolute right-2.5 top-1/2 -translate-y-1/2 pointer-events-none" />
               </div>
 
               {/* Primary "+ New Task" Action */}

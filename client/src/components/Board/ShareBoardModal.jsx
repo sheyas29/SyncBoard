@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { X, UserPlus, Shield, User, Check, AlertCircle } from 'lucide-react';
 import api from '../../api/client.js';
 
@@ -7,6 +7,15 @@ export const ShareBoardModal = ({ board, onClose, onMemberAdded }) => {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [error, setError] = useState('');
   const [successMsg, setSuccessMsg] = useState('');
+
+  // Escape key handler to close dialog
+  useEffect(() => {
+    const handleKeyDown = (e) => {
+      if (e.key === 'Escape') onClose();
+    };
+    window.addEventListener('keydown', handleKeyDown);
+    return () => window.removeEventListener('keydown', handleKeyDown);
+  }, [onClose]);
 
   const handleAddMember = async (e) => {
     e.preventDefault();
@@ -37,7 +46,12 @@ export const ShareBoardModal = ({ board, onClose, onMemberAdded }) => {
   };
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-[#383139]/40 backdrop-blur-sm animate-in fade-in duration-180">
+    <div
+      role="dialog"
+      aria-modal="true"
+      aria-labelledby="share-board-title"
+      className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-[#383139]/40 backdrop-blur-sm animate-in fade-in duration-180"
+    >
       <div className="bg-[#fffdf7] border border-white rounded-[38px] w-full max-w-md shadow-[0_24px_60px_-15px_rgba(56,49,57,0.2),inset_3px_3px_6px_rgba(255,255,255,0.95),inset_-3px_-3px_8px_rgba(56,49,57,0.05)] overflow-hidden">
         {/* Header */}
         <div className="px-7 py-5 border-b border-[#f1f2fa] flex items-center justify-between">
@@ -45,7 +59,9 @@ export const ShareBoardModal = ({ board, onClose, onMemberAdded }) => {
             <div className="w-8 h-8 rounded-full bg-[#ded0f9] shadow-[0_4px_10px_-2px_rgba(222,208,249,0.6),inset_1.5px_1.5px_2px_rgba(255,255,255,0.8),inset_-1.5px_-1.5px_2px_rgba(130,100,180,0.2)] flex items-center justify-center text-[#383139]">
               <UserPlus className="w-4 h-4 text-[#4b3378]" />
             </div>
-            <h3 className="font-bold text-base text-[#383139]">Board Collaborators</h3>
+            <h2 id="share-board-title" className="font-bold text-base text-[#383139]">
+              Board Collaborators
+            </h2>
           </div>
           <button
             onClick={onClose}
@@ -70,7 +86,7 @@ export const ShareBoardModal = ({ board, onClose, onMemberAdded }) => {
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
                 placeholder="colleague@example.com"
-                className="flex-1 px-4 py-3 rounded-2xl clay-inset-well text-sm font-semibold transition-all placeholder:text-[#8e8a94]"
+                className="flex-1 px-4 py-3 rounded-2xl clay-inset-well text-sm font-semibold transition-all placeholder:text-[#58515f]"
                 required
               />
               <button
@@ -99,9 +115,9 @@ export const ShareBoardModal = ({ board, onClose, onMemberAdded }) => {
 
           {/* Members List */}
           <div className="border-t border-[#f1f2fa] pt-4">
-            <h4 className="text-xs font-bold text-[#8e8a94] uppercase tracking-wider mb-3">
+            <h3 className="text-xs font-bold text-[#58515f] uppercase tracking-wider mb-3">
               Active Members ({board.members?.length || 0})
-            </h4>
+            </h3>
             <div className="space-y-2.5 max-h-48 overflow-y-auto pr-1">
               {/* Owner */}
               {board.owner && (
@@ -121,10 +137,10 @@ export const ShareBoardModal = ({ board, onClose, onMemberAdded }) => {
                       <p className="text-xs font-bold text-[#383139]">
                         {board.owner.name}
                       </p>
-                      <p className="text-[11px] text-[#8e8a94]">{board.owner.email}</p>
+                      <p className="text-xs text-[#58515f] font-medium">{board.owner.email}</p>
                     </div>
                   </div>
-                  <span className="text-[10px] font-bold uppercase px-2.5 py-0.5 rounded-full bg-[#f6a3ca] text-[#383139] shadow-[0_2px_6px_-1px_rgba(246,163,202,0.6),inset_1px_1px_2px_rgba(255,255,255,0.8)]">
+                  <span className="text-xs font-bold uppercase px-2.5 py-0.5 rounded-full bg-[#f6a3ca] text-[#383139] shadow-[0_2px_6px_-1px_rgba(246,163,202,0.6),inset_1px_1px_2px_rgba(255,255,255,0.8)]">
                     Owner
                   </span>
                 </div>
@@ -156,10 +172,10 @@ export const ShareBoardModal = ({ board, onClose, onMemberAdded }) => {
                             <p className="text-xs font-bold text-[#383139]">
                               {u.name}
                             </p>
-                            <p className="text-[11px] text-[#8e8a94]">{u.email}</p>
+                            <p className="text-xs text-[#58515f] font-medium">{u.email}</p>
                           </div>
                         </div>
-                        <span className="text-[10px] font-bold uppercase px-2.5 py-0.5 rounded-full bg-[#e6e8f5] text-[#383139]">
+                        <span className="text-xs font-bold uppercase px-2.5 py-0.5 rounded-full bg-[#e6e8f5] text-[#383139]">
                           {m.role || 'Member'}
                         </span>
                       </div>

@@ -62,14 +62,16 @@ export const Navbar = ({ onToggleActivity, hasActivityDrawer }) => {
         <div className="flex items-center gap-2 sm:gap-2.5">
           {/* Real-time Connection Indicator Pill */}
           <div
-            className={`flex items-center gap-1.5 px-3 py-1 rounded-full text-[11px] font-bold transition-all ${
+            className={`flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-bold transition-all ${
               connectionStatus === 'connected'
-                ? 'bg-[#c0efdc] text-[#245240] shadow-[inset_1px_1px_2px_rgba(255,255,255,0.85),inset_-1px_-1px_2px_rgba(90,160,130,0.2)]'
+                ? 'bg-[#c0efdc] text-[#1c4b38] shadow-[inset_1px_1px_2px_rgba(255,255,255,0.85),inset_-1px_-1px_2px_rgba(90,160,130,0.2)]'
                 : connectionStatus === 'connecting'
                 ? 'bg-[#f9e7a8] text-[#5c4912] shadow-[inset_1px_1px_2px_rgba(255,255,255,0.85),inset_-1px_-1px_2px_rgba(180,150,60,0.2)]'
                 : 'bg-[#fcd2df] text-[#6b253c] shadow-[inset_1px_1px_2px_rgba(255,255,255,0.85),inset_-1px_-1px_2px_rgba(180,60,90,0.2)]'
             }`}
             title={`Real-Time WebSocket: ${connectionStatus}`}
+            role="status"
+            aria-live="polite"
           >
             <span className="relative flex h-2 w-2">
               {connectionStatus === 'connected' && (
@@ -127,7 +129,7 @@ export const Navbar = ({ onToggleActivity, hasActivityDrawer }) => {
                   <span className="text-xs font-bold text-[#383139] max-w-[100px] truncate">
                     {user.name}
                   </span>
-                  <ChevronDown className="w-3 h-3 text-[#8e8a94]" />
+                  <ChevronDown className="w-3.5 h-3.5 text-[#58515f]" />
                 </div>
               </button>
 
@@ -140,7 +142,7 @@ export const Navbar = ({ onToggleActivity, hasActivityDrawer }) => {
                 >
                   <div className="px-3 py-2 border-b border-[#f1f2fa]">
                     <p className="text-xs font-bold text-[#383139] truncate">{user.name}</p>
-                    <p className="text-[11px] text-[#6e6878] truncate">{user.email}</p>
+                    <p className="text-xs text-[#58515f] truncate font-medium">{user.email}</p>
                   </div>
                   <button
                     role="menuitem"

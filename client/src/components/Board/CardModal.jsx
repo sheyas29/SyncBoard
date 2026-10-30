@@ -25,6 +25,15 @@ export const CardModal = ({
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [error, setError] = useState('');
 
+  // Escape key handler to close dialog
+  useEffect(() => {
+    const handleKeyDown = (e) => {
+      if (e.key === 'Escape') onClose();
+    };
+    window.addEventListener('keydown', handleKeyDown);
+    return () => window.removeEventListener('keydown', handleKeyDown);
+  }, [onClose]);
+
   // Handle typing indicator
   useEffect(() => {
     if (!socket || !card._id) return;
@@ -103,14 +112,19 @@ export const CardModal = ({
   };
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-[#383139]/40 backdrop-blur-sm animate-in fade-in duration-180">
+    <div
+      role="dialog"
+      aria-modal="true"
+      aria-labelledby="card-modal-title"
+      className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-[#383139]/40 backdrop-blur-sm animate-in fade-in duration-180"
+    >
       <div className="bg-[#fffdf7] border border-white rounded-[38px] w-full max-w-lg shadow-[0_24px_60px_-15px_rgba(56,49,57,0.2),inset_3px_3px_6px_rgba(255,255,255,0.95),inset_-3px_-3px_8px_rgba(56,49,57,0.05)] overflow-hidden flex flex-col max-h-[90vh]">
         {/* Header */}
         <div className="px-7 py-5 border-b border-[#f1f2fa] flex items-center justify-between">
           <div className="flex items-center gap-2">
-            <span className="text-xs font-bold uppercase tracking-wider px-3.5 py-1 rounded-full bg-[#ded0f9] text-[#4b3378] shadow-[0_3px_8px_-2px_rgba(222,208,249,0.7),inset_1px_1px_2px_rgba(255,255,255,0.8),inset_-1px_-1px_2px_rgba(130,100,180,0.15)]">
+            <h2 id="card-modal-title" className="text-xs font-bold uppercase tracking-wider px-3.5 py-1 rounded-full bg-[#ded0f9] text-[#4b3378] shadow-[0_3px_8px_-2px_rgba(222,208,249,0.7),inset_1px_1px_2px_rgba(255,255,255,0.8),inset_-1px_-1px_2px_rgba(130,100,180,0.15)]">
               Task Details
-            </span>
+            </h2>
           </div>
           <button
             onClick={onClose}

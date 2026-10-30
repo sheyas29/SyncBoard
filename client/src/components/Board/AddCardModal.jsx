@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { X, Plus, AlertCircle } from 'lucide-react';
 
 export const AddCardModal = ({
@@ -15,6 +15,15 @@ export const AddCardModal = ({
   const [dueDate, setDueDate] = useState('');
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [error, setError] = useState('');
+
+  // Escape key handler to close dialog
+  useEffect(() => {
+    const handleKeyDown = (e) => {
+      if (e.key === 'Escape') onClose();
+    };
+    window.addEventListener('keydown', handleKeyDown);
+    return () => window.removeEventListener('keydown', handleKeyDown);
+  }, [onClose]);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -45,7 +54,12 @@ export const AddCardModal = ({
   };
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-[#383139]/40 backdrop-blur-sm animate-in fade-in duration-180">
+    <div
+      role="dialog"
+      aria-modal="true"
+      aria-labelledby="add-card-title"
+      className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-[#383139]/40 backdrop-blur-sm animate-in fade-in duration-180"
+    >
       <div className="bg-[#fffdf7] border border-white rounded-[38px] w-full max-w-md shadow-[0_24px_60px_-15px_rgba(56,49,57,0.2),inset_3px_3px_6px_rgba(255,255,255,0.95),inset_-3px_-3px_8px_rgba(56,49,57,0.05)] overflow-hidden">
         {/* Header */}
         <div className="px-7 py-5 border-b border-[#f1f2fa] flex items-center justify-between">
@@ -53,9 +67,9 @@ export const AddCardModal = ({
             <div className="w-8 h-8 rounded-full bg-[#f6a3ca] shadow-[0_4px_10px_-2px_rgba(246,163,202,0.6),inset_1.5px_1.5px_2px_rgba(255,255,255,0.8),inset_-1.5px_-1.5px_2px_rgba(180,80,130,0.2)] flex items-center justify-center text-[#383139]">
               <Plus className="w-4 h-4 stroke-[2.5]" />
             </div>
-            <h3 className="font-bold text-base text-[#383139]">
+            <h2 id="add-card-title" className="font-bold text-base text-[#383139]">
               Add New Card
-            </h3>
+            </h2>
           </div>
           <button
             onClick={onClose}
@@ -84,7 +98,7 @@ export const AddCardModal = ({
               type="text"
               value={title}
               onChange={(e) => setTitle(e.target.value)}
-              className="w-full px-4 py-3 rounded-2xl clay-inset-well text-sm font-semibold transition-all placeholder:text-[#8e8a94]"
+              className="w-full px-4 py-3 rounded-2xl clay-inset-well text-sm font-semibold transition-all placeholder:text-[#58515f]"
               placeholder="e.g. Write integration test suite"
               autoFocus
               required
@@ -99,7 +113,7 @@ export const AddCardModal = ({
               rows={3}
               value={description}
               onChange={(e) => setDescription(e.target.value)}
-              className="w-full px-4 py-3 rounded-2xl clay-inset-well text-sm font-medium transition-all resize-none placeholder:text-[#8e8a94]"
+              className="w-full px-4 py-3 rounded-2xl clay-inset-well text-sm font-medium transition-all resize-none placeholder:text-[#58515f]"
               placeholder="Add key objectives or criteria..."
             />
           </div>

@@ -180,7 +180,7 @@ export const LoginPage = () => {
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
                   placeholder="name@company.com"
-                  className="w-full px-4 py-3 rounded-2xl clay-inset-well text-sm font-semibold transition-all placeholder:text-[#8e8a94]"
+                  className="w-full px-4 py-3 rounded-2xl clay-inset-well text-sm font-semibold transition-all placeholder:text-[#58515f]"
                   required
                 />
               </div>
@@ -194,7 +194,7 @@ export const LoginPage = () => {
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
                   placeholder="••••••••"
-                  className="w-full px-4 py-3 rounded-2xl clay-inset-well text-sm font-semibold transition-all placeholder:text-[#8e8a94]"
+                  className="w-full px-4 py-3 rounded-2xl clay-inset-well text-sm font-semibold transition-all placeholder:text-[#58515f]"
                   required
                 />
               </div>
@@ -217,7 +217,7 @@ export const LoginPage = () => {
 
             {/* Quick Demo Reviewer Profiles */}
             <div className="mt-6 pt-5 border-t border-[#f1f2fa]">
-              <div className="flex items-center gap-1.5 text-xs font-bold text-[#48404b] mb-3">
+              <div className="flex items-center gap-1.5 text-xs font-bold text-[#383139] mb-3">
                 <Sparkles className="w-4 h-4 text-[#e273a5]" />
                 <span>One-Click Test Reviewer Profiles:</span>
               </div>
@@ -226,18 +226,20 @@ export const LoginPage = () => {
                   type="button"
                   onClick={() => handleQuickDemo('Alex Rivera', 'alex@syncboard.dev', 'alex123456')}
                   className="p-3 rounded-2xl bg-[#c0efdc] hover:bg-[#b0ebd3] text-left shadow-[0_6px_14px_-3px_rgba(192,239,220,0.6),inset_1.5px_1.5px_3px_rgba(255,255,255,0.85),inset_-1.5px_-1.5px_3px_rgba(90,160,130,0.18)] active:scale-95 transition-all"
+                  aria-label="Sign in as reviewer Alex Rivera"
                 >
                   <div className="font-bold text-xs text-[#1c573c]">User 1 (Alex)</div>
-                  <div className="text-[11px] text-[#2e7454] font-medium">alex@syncboard.dev</div>
+                  <div className="text-xs text-[#1a5538] font-medium">alex@syncboard.dev</div>
                 </button>
 
                 <button
                   type="button"
                   onClick={() => handleQuickDemo('Taylor Swift', 'taylor@syncboard.dev', 'taylor123456')}
                   className="p-3 rounded-2xl bg-[#ded0f9] hover:bg-[#d4c2f6] text-left shadow-[0_6px_14px_-3px_rgba(222,208,249,0.6),inset_1.5px_1.5px_3px_rgba(255,255,255,0.85),inset_-1.5px_-1.5px_3px_rgba(130,100,180,0.18)] active:scale-95 transition-all"
+                  aria-label="Sign in as reviewer Taylor Swift"
                 >
                   <div className="font-bold text-xs text-[#4b3378]">User 2 (Taylor)</div>
-                  <div className="text-[11px] text-[#63469b] font-medium">taylor@syncboard.dev</div>
+                  <div className="text-xs text-[#432d6c] font-medium">taylor@syncboard.dev</div>
                 </button>
               </div>
             </div>

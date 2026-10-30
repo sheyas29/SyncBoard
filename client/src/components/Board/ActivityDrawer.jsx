@@ -9,6 +9,11 @@ export const ActivityDrawer = ({ boardId, isOpen, onClose }) => {
   useEffect(() => {
     if (!isOpen || !boardId) return;
 
+    const handleKeyDown = (e) => {
+      if (e.key === 'Escape') onClose();
+    };
+    window.addEventListener('keydown', handleKeyDown);
+
     const fetchActivities = async () => {
       setLoading(true);
       try {
@@ -24,7 +29,11 @@ export const ActivityDrawer = ({ boardId, isOpen, onClose }) => {
     };
 
     fetchActivities();
-  }, [isOpen, boardId]);
+
+    return () => {
+      window.removeEventListener('keydown', handleKeyDown);
+    };
+  }, [isOpen, boardId, onClose]);
 
   if (!isOpen) return null;
 
@@ -69,14 +78,18 @@ export const ActivityDrawer = ({ boardId, isOpen, onClose }) => {
   };
 
   return (
-    <div className="fixed inset-y-0 right-0 z-50 w-full max-w-sm bg-[#fffdf7] border-l border-white shadow-[0_20px_50px_-10px_rgba(56,49,57,0.2),inset_3px_0_6px_rgba(255,255,255,0.95)] flex flex-col animate-in slide-in-from-right duration-180">
+    <div
+      role="region"
+      aria-label="Board Activity Log"
+      className="fixed inset-y-0 right-0 z-50 w-full max-w-sm bg-[#fffdf7] border-l border-white shadow-[0_20px_50px_-10px_rgba(56,49,57,0.2),inset_3px_0_6px_rgba(255,255,255,0.95)] flex flex-col animate-in slide-in-from-right duration-180"
+    >
       {/* Header */}
       <div className="p-5 border-b border-[#f1f2fa] flex items-center justify-between">
         <div className="flex items-center gap-2.5">
           <div className="w-8 h-8 rounded-full bg-[#ded0f9] shadow-[0_4px_10px_-2px_rgba(222,208,249,0.6),inset_1.5px_1.5px_2px_rgba(255,255,255,0.8),inset_-1.5px_-1.5px_2px_rgba(130,100,180,0.2)] flex items-center justify-center text-[#383139]">
             <History className="w-4 h-4 text-[#4b3378]" />
           </div>
-          <h3 className="font-bold text-base text-[#383139]">Board Activity</h3>
+          <h2 className="font-bold text-base text-[#383139]">Board Activity</h2>
         </div>
         <button
           onClick={onClose}
@@ -91,11 +104,11 @@ export const ActivityDrawer = ({ boardId, isOpen, onClose }) => {
       {/* Content */}
       <div className="p-5 overflow-y-auto flex-1 space-y-3.5">
         {loading ? (
-          <div className="flex items-center justify-center p-8 text-[#8e8a94] text-xs font-semibold">
+          <div className="flex items-center justify-center p-8 text-[#58515f] text-xs font-semibold">
             Loading activity stream...
           </div>
         ) : activities.length === 0 ? (
-          <div className="text-center p-8 text-[#8e8a94] text-xs font-medium">
+          <div className="text-center p-8 text-[#58515f] text-xs font-medium">
             No recent activity recorded yet.
           </div>
         ) : (
@@ -119,7 +132,7 @@ export const ActivityDrawer = ({ boardId, isOpen, onClose }) => {
                   <span className="font-bold text-[#383139]">{act.user?.name}</span>{' '}
                   {renderActionText(act)}
                 </p>
-                <span className="text-[10px] font-semibold text-[#8e8a94] mt-1 block">
+                <span className="text-xs font-semibold text-[#58515f] mt-1 block">
                   {new Date(act.createdAt).toLocaleTimeString([], {
                     hour: '2-digit',
                     minute: '2-digit',
