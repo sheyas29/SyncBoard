@@ -253,11 +253,11 @@
   overflow-y: auto;
   overflow-x: hidden;
   scrollbar-width: thin;
-  scrollbar-color: rgba(142, 138, 160, 0.35) transparent;
+  scrollbar-color: rgba(142, 138, 160, 0.3) transparent;
 }
 
 .column-card-scroll::-webkit-scrollbar {
-  width: 6px;
+  width: 5px;
 }
 
 .column-card-scroll::-webkit-scrollbar-track {
@@ -266,12 +266,36 @@
 }
 
 .column-card-scroll::-webkit-scrollbar-thumb {
-  background: rgba(142, 138, 160, 0.28);
+  background: rgba(142, 138, 160, 0.22);
   border-radius: 999px;
 }
 
 .column-card-scroll::-webkit-scrollbar-thumb:hover {
-  background: rgba(142, 138, 160, 0.55);
+  background: rgba(142, 138, 160, 0.45);
+}
+
+/* Subtle board horizontal scrollbar */
+.board-scroll {
+  scrollbar-width: thin;
+  scrollbar-color: rgba(142, 138, 160, 0.3) transparent;
+}
+
+.board-scroll::-webkit-scrollbar {
+  height: 6px;
+}
+
+.board-scroll::-webkit-scrollbar-track {
+  background: transparent;
+  margin: 0 16px;
+}
+
+.board-scroll::-webkit-scrollbar-thumb {
+  background: rgba(142, 138, 160, 0.22);
+  border-radius: 999px;
+}
+
+.board-scroll::-webkit-scrollbar-thumb:hover {
+  background: rgba(142, 138, 160, 0.45);
 }
 
 @media (prefers-reduced-motion: reduce) {

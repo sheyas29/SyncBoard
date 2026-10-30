@@ -311,7 +311,7 @@ export const BoardDetailPage = () => {
   }
 
   return (
-    <div className="min-h-screen lg:h-screen lg:overflow-hidden bg-[#f1f2fa] text-[#383139] flex flex-col font-sans">
+    <div className="h-screen w-full overflow-hidden bg-[#f1f2fa] text-[#383139] flex flex-col font-sans">
       <Navbar
         onToggleActivity={() => setIsActivityOpen(!isActivityOpen)}
         hasActivityDrawer={true}
@@ -466,9 +466,9 @@ export const BoardDetailPage = () => {
             </div>
           </div>
 
-          {/* Kanban Columns with Drag and Drop */}
+          {/* Kanban Columns with Drag and Drop - Single scroll strategy */}
           <DragDropContext onDragEnd={handleDragEnd}>
-            <div className="flex-1 min-h-0 flex gap-6 overflow-x-auto pb-2 items-stretch">
+            <div className="flex-1 min-h-0 flex gap-5 overflow-x-auto pb-1 items-stretch board-scroll">
               <Column
                 columnId="todo"
                 title="To Do"
