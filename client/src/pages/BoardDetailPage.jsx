@@ -17,6 +17,9 @@ import {
   ShieldAlert,
   Loader2,
   Bell,
+  Search,
+  X,
+  Filter,
 } from 'lucide-react';
 
 export const BoardDetailPage = () => {
@@ -30,6 +33,10 @@ export const BoardDetailPage = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [inviteNotification, setInviteNotification] = useState(null);
+
+  // Search & Filter state for managing high-density columns
+  const [searchQuery, setSearchQuery] = useState('');
+  const [priorityFilter, setPriorityFilter] = useState('all');
 
   // Modals state
   const [selectedCard, setSelectedCard] = useState(null);
@@ -257,10 +264,22 @@ export const BoardDetailPage = () => {
     setCards((prev) => prev.filter((c) => c._id !== cardId));
   };
 
+  const filteredCards = cards.filter((card) => {
+    const matchesSearch =
+      !searchQuery.trim() ||
+      card.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
+      (card.description && card.description.toLowerCase().includes(searchQuery.toLowerCase()));
+
+    const matchesPriority =
+      priorityFilter === 'all' || card.priority === priorityFilter;
+
+    return matchesSearch && matchesPriority;
+  });
+
   const cardsByColumn = {
-    todo: cards.filter((c) => c.status === 'todo').sort((a, b) => a.order - b.order),
-    in_progress: cards.filter((c) => c.status === 'in_progress').sort((a, b) => a.order - b.order),
-    done: cards.filter((c) => c.status === 'done').sort((a, b) => a.order - b.order),
+    todo: filteredCards.filter((c) => c.status === 'todo').sort((a, b) => a.order - b.order),
+    in_progress: filteredCards.filter((c) => c.status === 'in_progress').sort((a, b) => a.order - b.order),
+    done: filteredCards.filter((c) => c.status === 'done').sort((a, b) => a.order - b.order),
   };
 
   if (error) {
@@ -291,7 +310,7 @@ export const BoardDetailPage = () => {
   }
 
   return (
-    <div className="min-h-screen bg-[#f1f2fa] text-[#383139] flex flex-col font-sans">
+    <div className="min-h-screen lg:h-screen lg:overflow-hidden bg-[#f1f2fa] text-[#383139] flex flex-col font-sans">
       <Navbar
         currentBoardTitle={board?.title}
         onToggleActivity={() => setIsActivityOpen(!isActivityOpen)}
@@ -336,52 +355,98 @@ export const BoardDetailPage = () => {
           </div>
         </div>
       ) : (
-        <main className="flex-1 flex flex-col max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-8 py-5">
+        <main className="flex-1 min-h-0 flex flex-col max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-8 py-3.5">
           {/* Board Header Shelf */}
-          <div className="rounded-[34px] bg-[#fffdf7] border border-white shadow-[0_12px_28px_-8px_rgba(56,49,57,0.08),inset_2.5px_2.5px_5px_rgba(255,255,255,0.95),inset_-2.5px_-2.5px_6px_rgba(56,49,57,0.04)] p-5 sm:p-6 mb-6 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
-            <div>
-              <div className="flex items-center gap-3">
-                <Link
-                  to="/dashboard"
-                  className="w-9 h-9 rounded-full bg-[#f1f2fa] hover:bg-[#e4e6f4] text-[#383139] shadow-[0_3px_8px_-2px_rgba(56,49,57,0.08),inset_1.5px_1.5px_3px_rgba(255,255,255,0.95),inset_-1.5px_-1.5px_3px_rgba(56,49,57,0.06)] active:scale-95 transition-all flex items-center justify-center"
-                  title="Back to Dashboard"
-                >
-                  <ArrowLeft className="w-4 h-4 stroke-[2.5]" />
-                </Link>
-                <h1 className="text-2xl sm:text-3xl font-extrabold text-[#383139] tracking-tight">
-                  {board?.title}
-                </h1>
+          <div className="rounded-[30px] bg-[#fffdf7] border border-white shadow-[0_10px_24px_-8px_rgba(56,49,57,0.07),inset_2px_2px_4px_rgba(255,255,255,0.95),inset_-2px_-2px_5px_rgba(56,49,57,0.03)] px-5 py-3.5 mb-3.5 flex flex-col md:flex-row md:items-center justify-between gap-3.5 shrink-0">
+            {/* Left: Back, Title & Task Count */}
+            <div className="flex items-center gap-3">
+              <Link
+                to="/dashboard"
+                className="w-9 h-9 rounded-full bg-[#f1f2fa] hover:bg-[#e4e6f4] text-[#383139] shadow-[0_3px_8px_-2px_rgba(56,49,57,0.08),inset_1.5px_1.5px_3px_rgba(255,255,255,0.95),inset_-1.5px_-1.5px_3px_rgba(56,49,57,0.06)] active:scale-95 transition-all flex items-center justify-center shrink-0"
+                title="Back to Dashboard"
+              >
+                <ArrowLeft className="w-4 h-4 stroke-[2.5]" />
+              </Link>
+              <div>
+                <div className="flex items-center gap-2.5">
+                  <h1 className="text-xl sm:text-2xl font-extrabold text-[#383139] tracking-tight">
+                    {board?.title}
+                  </h1>
+                  <span className="text-[11px] font-bold px-2.5 py-0.5 rounded-full bg-[#edeaf7] text-[#48404b] shadow-[inset_1px_1px_2px_rgba(56,49,57,0.06)]">
+                    {filteredCards.length} {filteredCards.length === 1 ? 'task' : 'tasks'}
+                    {filteredCards.length !== cards.length && ` (of ${cards.length})`}
+                  </span>
+                </div>
+                {board?.description && (
+                  <p className="text-xs font-medium text-[#6e6878] truncate max-w-md sm:max-w-xl">
+                    {board.description}
+                  </p>
+                )}
               </div>
-              {board?.description && (
-                <p className="text-xs font-medium text-[#48404b] mt-1.5 pl-12 max-w-2xl leading-relaxed">
-                  {board.description}
-                </p>
-              )}
             </div>
 
-            {/* Actions: Collaborators & Activity */}
-            <div className="flex items-center gap-2.5 self-end sm:self-auto">
+            {/* Right: Quick Search, Priority Filter, Actions */}
+            <div className="flex flex-wrap items-center gap-2 self-end md:self-auto">
+              {/* Search input */}
+              <div className="relative w-44 sm:w-52">
+                <Search className="w-3.5 h-3.5 text-[#8e8a94] absolute left-3 top-1/2 -translate-y-1/2 pointer-events-none" />
+                <input
+                  type="text"
+                  value={searchQuery}
+                  onChange={(e) => setSearchQuery(e.target.value)}
+                  placeholder="Search cards..."
+                  className="w-full pl-8 pr-7 py-1.5 rounded-full clay-inset-well text-xs font-semibold placeholder:text-[#8e8a94] transition-all"
+                />
+                {searchQuery && (
+                  <button
+                    onClick={() => setSearchQuery('')}
+                    className="absolute right-2.5 top-1/2 -translate-y-1/2 text-[#8e8a94] hover:text-[#383139] text-xs font-bold"
+                  >
+                    <X className="w-3 h-3" />
+                  </button>
+                )}
+              </div>
+
+              {/* Priority filter */}
+              <div className="relative">
+                <select
+                  value={priorityFilter}
+                  onChange={(e) => setPriorityFilter(e.target.value)}
+                  className="px-3 py-1.5 rounded-full clay-inset-well text-xs font-bold text-[#383139] cursor-pointer appearance-none pr-7"
+                  title="Filter by priority"
+                >
+                  <option value="all">All Priorities</option>
+                  <option value="urgent">🔴 Urgent</option>
+                  <option value="high">🟡 High</option>
+                  <option value="medium">🟣 Medium</option>
+                  <option value="low">🟢 Low</option>
+                </select>
+                <Filter className="w-3 h-3 text-[#8e8a94] absolute right-2.5 top-1/2 -translate-y-1/2 pointer-events-none" />
+              </div>
+
+              {/* Collaborators Button */}
               <button
                 onClick={() => setIsShareModalOpen(true)}
-                className="px-4 py-2.5 rounded-full clay-btn-pill clay-btn-lavender text-xs font-bold"
+                className="px-3.5 py-1.5 rounded-full clay-btn-pill clay-btn-lavender text-xs font-bold"
               >
-                <UserPlus className="w-4 h-4 text-[#4b3378]" />
+                <UserPlus className="w-3.5 h-3.5 text-[#4b3378]" />
                 <span>Collaborators ({board?.members?.length || 1})</span>
               </button>
 
+              {/* Activity Log Button */}
               <button
                 onClick={() => setIsActivityOpen(true)}
-                className="px-4 py-2.5 rounded-full clay-btn-pill clay-btn-mint text-xs font-bold"
+                className="px-3.5 py-1.5 rounded-full clay-btn-pill clay-btn-mint text-xs font-bold"
               >
-                <History className="w-4 h-4 text-[#1c573c]" />
-                <span>Activity Log</span>
+                <History className="w-3.5 h-3.5 text-[#1c573c]" />
+                <span>Activity</span>
               </button>
             </div>
           </div>
 
           {/* Kanban Columns with Drag and Drop */}
           <DragDropContext onDragEnd={handleDragEnd}>
-            <div className="flex-1 flex gap-6 overflow-x-auto pb-6 items-start">
+            <div className="flex-1 min-h-0 flex gap-6 overflow-x-auto pb-2 items-stretch">
               <Column
                 columnId="todo"
                 title="To Do"

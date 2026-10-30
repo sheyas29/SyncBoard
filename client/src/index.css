@@ -248,6 +248,32 @@
   border: 2px solid var(--dp-color-accent) !important;
 }
 
+/* Sleek custom column scrollbar */
+.column-card-scroll {
+  overflow-y: auto;
+  overflow-x: hidden;
+  scrollbar-width: thin;
+  scrollbar-color: rgba(142, 138, 160, 0.35) transparent;
+}
+
+.column-card-scroll::-webkit-scrollbar {
+  width: 6px;
+}
+
+.column-card-scroll::-webkit-scrollbar-track {
+  background: transparent;
+  margin: 6px 0;
+}
+
+.column-card-scroll::-webkit-scrollbar-thumb {
+  background: rgba(142, 138, 160, 0.28);
+  border-radius: 999px;
+}
+
+.column-card-scroll::-webkit-scrollbar-thumb:hover {
+  background: rgba(142, 138, 160, 0.55);
+}
+
 @media (prefers-reduced-motion: reduce) {
   * {
     animation-duration: 0.01ms !important;

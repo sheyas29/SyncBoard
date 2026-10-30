@@ -57,10 +57,10 @@ export const Column = ({
 
   return (
     <div
-      className={`flex flex-col flex-1 min-w-[310px] max-w-sm rounded-[34px] ${theme.columnBg} border ${theme.columnBorder} shadow-[0_14px_32px_-10px_rgba(56,49,57,0.07),inset_2.5px_2.5px_5px_rgba(255,255,255,0.95),inset_-2.5px_-2.5px_6px_rgba(56,49,57,0.03)] overflow-hidden`}
+      className={`flex flex-col flex-1 min-w-[310px] max-w-sm rounded-[34px] ${theme.columnBg} border ${theme.columnBorder} shadow-[0_14px_32px_-10px_rgba(56,49,57,0.07),inset_2.5px_2.5px_5px_rgba(255,255,255,0.95),inset_-2.5px_-2.5px_6px_rgba(56,49,57,0.03)] overflow-hidden h-full min-h-[520px] max-h-full`}
     >
-      {/* Column Header Cushion */}
-      <div className="p-3.5 pb-2">
+      {/* Column Header Cushion - Fixed at top of column */}
+      <div className="p-3.5 pb-2 shrink-0">
         <div
           className={`px-4 py-3 rounded-[24px] ${theme.trayBg} ${theme.headerShadow} flex items-center justify-between transition-all`}
         >
@@ -88,14 +88,14 @@ export const Column = ({
         </div>
       </div>
 
-      {/* Droppable Card List Recessed Tray */}
-      <div className="p-3 pt-1 flex-1 flex flex-col">
+      {/* Droppable Card List Recessed Tray with Internal Smooth Scroll */}
+      <div className="p-3 pt-1 flex-1 min-h-0 flex flex-col overflow-hidden">
         <Droppable droppableId={columnId}>
           {(provided, snapshot) => (
             <div
               ref={provided.innerRef}
               {...provided.droppableProps}
-              className={`p-3 flex-1 flex flex-col min-h-[460px] rounded-[26px] border ${theme.wellBorder} ${theme.wellBg} shadow-[inset_1.5px_1.5px_4px_rgba(56,49,57,0.05),inset_-1.5px_-1.5px_4px_rgba(255,255,255,0.9)] transition-all duration-200 ${
+              className={`p-3 flex-1 min-h-0 flex flex-col rounded-[26px] border ${theme.wellBorder} ${theme.wellBg} shadow-[inset_1.5px_1.5px_4px_rgba(56,49,57,0.05),inset_-1.5px_-1.5px_4px_rgba(255,255,255,0.9)] column-card-scroll transition-all duration-200 ${
                 snapshot.isDraggingOver
                   ? 'bg-white/70 ring-2 ring-[#c0b3df] shadow-[inset_2px_2px_6px_rgba(56,49,57,0.09)]'
                   : ''
@@ -116,7 +116,7 @@ export const Column = ({
 
               {/* Empty State */}
               {cards.length === 0 && !snapshot.isDraggingOver && (
-                <div className="flex-1 flex flex-col items-center justify-center p-6 border-2 border-dashed border-[#d8d2e8] bg-white/40 rounded-[22px] text-center my-2">
+                <div className="flex-1 flex flex-col items-center justify-center p-6 border-2 border-dashed border-[#d8d2e8] bg-white/40 rounded-[22px] text-center my-auto py-10">
                   <p className="text-xs text-[#6e6878] font-semibold">No tasks in this tray</p>
                   <button
                     onClick={() => onAddCardClick(columnId)}
