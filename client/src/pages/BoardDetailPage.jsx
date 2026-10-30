@@ -26,7 +26,7 @@ import {
 export const BoardDetailPage = () => {
   const { id: boardId } = useParams();
   const { user } = useAuth();
-  const { socket } = useSocket();
+  const { socket, setActiveUsers } = useSocket();
   const navigate = useNavigate();
 
   const [board, setBoard] = useState(null);
@@ -162,6 +162,7 @@ export const BoardDetailPage = () => {
 
     return () => {
       socket.emit('leave-board', { boardId, user });
+      if (setActiveUsers) setActiveUsers([]);
       socket.off('card:created', handleCardCreated);
       socket.off('card:updated', handleCardUpdated);
       socket.off('card:moved', handleCardMoved);

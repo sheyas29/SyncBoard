@@ -60,7 +60,7 @@ export const SocketProvider = ({ children }) => {
   }, [socket, connectionStatus, user]);
 
   return (
-    <SocketContext.Provider value={{ socket, connectionStatus, isConnected: connectionStatus === 'connected', activeUsers }}>
+    <SocketContext.Provider value={{ socket, connectionStatus, isConnected: connectionStatus === 'connected', activeUsers, setActiveUsers }}>
       {children}
     </SocketContext.Provider>
   );

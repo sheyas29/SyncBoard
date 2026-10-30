@@ -6,7 +6,7 @@ import { LayoutDashboard, LogOut, KanbanSquare, ChevronDown } from 'lucide-react
 
 export const Navbar = ({ onToggleActivity, hasActivityDrawer }) => {
   const { user, logout } = useAuth();
-  const { connectionStatus } = useSocket();
+  const { connectionStatus, activeUsers } = useSocket();
   const navigate = useNavigate();
 
   const [isProfileOpen, setIsProfileOpen] = useState(false);
@@ -91,6 +91,50 @@ export const Navbar = ({ onToggleActivity, hasActivityDrawer }) => {
               {connectionStatus === 'connected' ? 'Live Sync' : connectionStatus}
             </span>
           </div>
+
+          {/* Active Collaborators Online (rendered when 2+ users connected) */}
+          {activeUsers && activeUsers.length >= 2 && (
+            <div
+              className="flex items-center -space-x-1.5 px-2 py-1 rounded-full bg-[#f1f2fa] border border-[#e2dfec] shadow-[inset_1px_1px_2px_rgba(56,49,57,0.06),inset_-1px_-1px_2px_rgba(255,255,255,0.9)]"
+              aria-label={`${activeUsers.length} people online`}
+              role="group"
+            >
+              {activeUsers.slice(0, 3).map((u, i) => (
+                <div
+                  key={u._id || i}
+                  className="relative group shrink-0"
+                  title={`${u.name} (Online)`}
+                >
+                  <img
+                    src={
+                      u.avatar ||
+                      `https://api.dicebear.com/7.x/initials/svg?seed=${encodeURIComponent(
+                        u.name || 'User'
+                      )}`
+                    }
+                    alt={u.name || 'User'}
+                    className="w-6 h-6 rounded-full ring-2 ring-[#fffdf7] bg-[#edeaf7] object-cover"
+                  />
+                  {/* Green online dot */}
+                  <span
+                    className="absolute -bottom-0.5 -right-0.5 w-2 h-2 rounded-full bg-[#16a34a] ring-1.5 ring-white"
+                    aria-hidden="true"
+                  />
+                </div>
+              ))}
+
+              {/* +N overflow badge if more than 3 users */}
+              {activeUsers.length > 3 && (
+                <span
+                  className="w-6 h-6 rounded-full bg-white border border-[#dedae8] text-[#383139] text-xs font-bold flex items-center justify-center ring-2 ring-[#fffdf7] shrink-0"
+                  title={`${activeUsers.length - 3} more collaborators online`}
+                  aria-label={`+${activeUsers.length - 3} more collaborators`}
+                >
+                  +{activeUsers.length - 3}
+                </span>
+              )}
+            </div>
+          )}
 
           {/* Activity Drawer Toggle (Grid Icon) */}
           {hasActivityDrawer && onToggleActivity && (
